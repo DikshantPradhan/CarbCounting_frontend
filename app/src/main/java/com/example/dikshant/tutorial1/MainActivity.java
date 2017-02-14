@@ -20,6 +20,9 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    // general things
+    DBHandler userInfo;
+
     // main page
     TextView mainMessageText;
     Button picture;
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        userInfo = new DBHandler(getBaseContext());
         introScreen();
     }
 
