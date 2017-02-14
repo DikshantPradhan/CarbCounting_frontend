@@ -20,12 +20,26 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView messagetext;
-    Button changetextbtn;
+    // main page
+    TextView mainMessageText;
+    Button picture;
+    Button myData;
+    Button nutritionalDatabase;
+    Button support;
+
+    // clarification page
+    TextView clarificationInstructions;
     Button changetextbtn2;
     Spinner foodSpinner;
 
+    // results page
     Button finalResultButton;
+    Button return_to_main;
+    TextView results;
+
+    // my data page
+    TextView dataText;
+
     //private ClarifaiClient client;
 
     //ADDED FOR  DATABASE FUNCTIONALITY
@@ -37,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        introScreen();
+    }
+
+    private void introScreen() {
         setContentView(R.layout.activity_main);
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
 
@@ -48,35 +66,58 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Food Database", "CSV not read into database");
         }
 
+        mainMessageText = (TextView) findViewById(R.id.message_1);
 
-
-        messagetext = (TextView) findViewById(R.id.message_1);
-
-        changetextbtn = (Button) findViewById(R.id.button_1);
-        changetextbtn.setText("Select an Image");
-
-        changetextbtn.setOnClickListener(new View.OnClickListener() {
+        picture = (Button) findViewById(R.id.button_1);
+        picture.setText("Select an Image");
+        picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                messagetext.setText(getString(R.string.user_message));
+                mainMessageText.setText(getString(R.string.user_message));
                 userClarification(adapter);
+            }
+        });
 
+        myData = (Button) findViewById(R.id.my_data);
+        myData.setText("My Data");
+        myData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                // to be implemented
+            }
+        });
 
+        nutritionalDatabase = (Button) findViewById(R.id.nutritional_database);
+        nutritionalDatabase.setText("Nutritional" + "\n" + "Database");
+        nutritionalDatabase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                // to be implemented
+            }
+        });
+
+        support = (Button) findViewById(R.id.support_faqs);
+        support.setText("Support & FAQs");
+        support.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                // to be implemented
             }
         });
     }
 
     private void userClarification(ArrayAdapter<CharSequence> adapter) {
-        setContentView(R.layout.activity_second);
+        setContentView(R.layout.user_clarification);
 
         finalResultButton = (Button) findViewById(R.id.finalResult);
+        finalResultButton.setText("Show Final Result");
 
         foodSpinner = (Spinner) findViewById(R.id.spinner);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         foodSpinner.setAdapter(adapter);
 
-        String selectedFood = foodSpinner.getSelectedItem().toString();
+        //final String selectedFood = foodSpinner.getSelectedItem().toString();
         //Log.d("Spinner", selectedFood);
 
         foodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -89,9 +130,19 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         setContentView(R.layout.final_result);
-                        messagetext = (TextView) findViewById(R.id.results_text);
-                        messagetext.setText(selectedFood);
+                        results = (TextView) findViewById(R.id.results_text);
+                        results.setText(selectedFood);
                         Log.d("Flow", "Final Results Page");
+
+                        return_to_main = (Button) findViewById(R.id.return_to_start_button);
+                        return_to_main.setText("Return to Start Page");
+                        return_to_main.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                setContentView(R.layout.activity_main);
+                                introScreen();
+                            }
+                        });
                     }
                 });
             }
@@ -100,14 +151,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        messagetext = (TextView) findViewById(R.id.message_2);
+        clarificationInstructions = (TextView) findViewById(R.id.message_2);
         changetextbtn2 = (Button) findViewById(R.id.button_2);
         changetextbtn2.setText("Select Potato");
 
         changetextbtn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                messagetext.setText("Use the Drop-Down Menu");
+                clarificationInstructions.setText("Use the Drop-Down Menu");
             }
         });
     }

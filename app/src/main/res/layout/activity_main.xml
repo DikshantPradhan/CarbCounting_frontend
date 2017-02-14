@@ -28,4 +28,33 @@
         android:layout_marginTop="41dp"
         android:id="@+id/button_1"
         tools:ignore="UnknownId" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/button_1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="40dp"
+        android:layout_marginEnd="40dp"
+        android:id="@+id/my_data" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/button_1"
+        android:layout_alignStart="@+id/button_1"
+        android:id="@+id/nutritional_database" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/nutritional_database"
+        android:layout_alignLeft="@+id/my_data"
+        android:layout_alignStart="@+id/my_data"
+        android:id="@+id/support_faqs" />
 </RelativeLayout>
