@@ -39,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
 
     // my data page
     TextView dataText;
+    Button monthly;
+    Button weekly;
+    Button daily;
+
+    // ndb page
+    Button ndbSearch;
+    Button ndbCategories;
 
     //private ClarifaiClient client;
 
@@ -83,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         myData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                // to be implemented
+                myDataPage();
             }
         });
 
@@ -92,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         nutritionalDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                // to be implemented
+                nutritionalDatabasePage();
             }
         });
 
@@ -104,6 +111,28 @@ public class MainActivity extends AppCompatActivity {
                 // to be implemented
             }
         });
+    }
+
+    private void nutritionalDatabasePage() {
+        setContentView(R.layout.nutritional_database_page);
+
+        ndbCategories = (Button) findViewById(R.id.ndb_categories);
+        ndbSearch = (Button) findViewById(R.id.ndb_search);
+
+        ndbCategories.setText("Categories");
+        ndbSearch.setText("Search");
+    }
+
+    private void myDataPage() {
+        setContentView(R.layout.my_data_page);
+
+        monthly = (Button) findViewById(R.id.data_monthly);
+        weekly = (Button) findViewById(R.id.data_weekly);
+        daily = (Button) findViewById(R.id.data_daily);
+
+        monthly.setText("Monthly Data");
+        weekly.setText("Weekly Data");
+        daily.setText("Daily Data");
     }
 
     private void userClarification(ArrayAdapter<CharSequence> adapter) {
