@@ -4,11 +4,15 @@ package com.example.dikshant.tutorial1;
  * Created by Dikshant on 2/14/2017.
  */
 
+import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.util.Log;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -69,12 +73,65 @@ public class clarifaiHandler {
     }
 
     public List<Concept> getPredictions(@NonNull final byte[] imageBytes){
+
+        Log.d("predictions", "inside method");
+
         ClarifaiResponse<List<ClarifaiOutput<Concept>>> response =  foodModel.predict()
                 .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(imageBytes)))
                 .executeSync();
+
+        Log.d("predictions", "got response");
+
         List<ClarifaiOutput<Concept>> predictions = response.get();
 
+        Log.d("predictions", "got list");
+
         return predictions.get(0).data();
+    }
+
+    public void onImagePicked(@NonNull final byte[] imageBytes) {
+        // Now we will upload our image to the Clarifai API
+        //setBusy(true);
+
+        // Make sure we don't show a list of old concepts while the image is being uploaded
+        //adapter.setData(Collections.<Concept>emptyList());
+
+        new AsyncTask<Void, Void, ClarifaiResponse<List<ClarifaiOutput<Concept>>>>() {
+            @Override protected ClarifaiResponse<List<ClarifaiOutput<Concept>>> doInBackground(Void... params) {
+                // The default Clarifai model that identifies concepts in images
+                //final ConceptModel generalModel = App.get().clarifaiClient().getDefaultModels().foodModel();
+
+                // Use this model to predict, with the image that the user just selected as the input
+
+                Log.d("predictions", "smth");
+
+                return foodModel.predict()
+                        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(imageBytes)))
+                        .executeSync();
+            }
+
+            @Override protected void onPostExecute(ClarifaiResponse<List<ClarifaiOutput<Concept>>> response) {
+                //setBusy(false);
+                if (!response.isSuccessful()) {
+                    //showErrorSnackbar(R.string.error_while_contacting_api);
+                    return;
+                }
+                final List<ClarifaiOutput<Concept>> predictions = response.get();
+                if (predictions.isEmpty()) {
+                    //showErrorSnackbar(R.string.no_results_from_api);
+                    return;
+                }
+
+
+            }
+            //private void showErrorSnackbar(@StringRes int errorString) {
+            //    Snackbar.make(
+            //            root,
+            //            errorString,
+            //            Snackbar.LENGTH_INDEFINITE
+            //    ).show();
+            //}
+        }.execute();
     }
 
 
