@@ -1,5 +1,11 @@
 package com.example.dikshant.tutorial1;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +17,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -22,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     // general things
     DBHandler userInfo;
+    clarifaiHandler clarifai;
 
     // main page
     TextView mainMessageText;
@@ -29,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     Button myData;
     Button nutritionalDatabase;
     Button support;
+
+    public static final int PICK_IMAGE = 100;
 
     // clarification page
     TextView clarificationInstructions;
@@ -62,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         userInfo = new DBHandler(getBaseContext());
+
+        try {
+            clarifai = new clarifaiHandler();
+        }
+        catch (Exception e){
+            Log.d("failure", "Clarifai could not initialize; most likely no internet connection");
+        }
         introScreen();
     }
 
@@ -84,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
                 mainMessageText.setText(getString(R.string.user_message));
                 userClarification(adapter);
             }
@@ -229,5 +249,51 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return trueKeys;
+    }
+
+    //@OnClick(R.id.fab)
+    void pickImage() {
+        startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
+    }
+
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        switch(requestCode) {
+            case PICK_IMAGE:
+                final byte[] imageBytes = retrieveSelectedImage(this, data);
+                if (imageBytes != null) {
+                    //onImagePicked(imageBytes);
+
+
+                }
+                break;
+        }
+    }
+
+    @Nullable
+    public static byte[] retrieveSelectedImage(@NonNull Context context, @NonNull Intent data) {
+        InputStream inStream = null;
+        Bitmap bitmap = null;
+        try {
+            inStream = context.getContentResolver().openInputStream(data.getData());
+            bitmap = BitmapFactory.decodeStream(inStream);
+            final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+            return outStream.toByteArray();
+        } catch (FileNotFoundException e) {
+            return null;
+        } finally {
+            if (inStream != null) {
+                try {
+                    inStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+            if (bitmap != null) {
+                bitmap.recycle();
+            }
+        }
     }
 }
