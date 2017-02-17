@@ -36,12 +36,17 @@ public class clarifaiHandler {
     @Nullable
     private ClarifaiClient client;
     private ConceptModel foodModel;
+    private List<Concept> predictionsList;
+
+    private boolean predictionsFlag;
 
     public clarifaiHandler(){
         //client = new ClarifaiBuilder("qeNitO9lCdNO7k7UixA6yUXKIIX3-MolxrXUL4Oq", "zOxPlyS5BfqFCp_CVW1Y2ZkZyNW81IMQ6sAOkodR")
                 //.client(new OkHttpClient()) // OPTIONAL. Allows customization of OkHttp by the user
          //       .buildSync(); // or use .build() to get a Future<ClarifaiClient>
         Log.d("Clar", "start");
+
+        predictionsFlag = false;
 
         client = new ClarifaiBuilder("qeNitO9lCdNO7k7UixA6yUXKIIX3-MolxrXUL4Oq", "zOxPlyS5BfqFCp_CVW1Y2ZkZyNW81IMQ6sAOkodR")
                 // Optionally customize HTTP client via a custom OkHttp instance
@@ -59,7 +64,6 @@ public class clarifaiHandler {
                         .build()
                 )
                 .buildSync();
-
         Log.d("Clar", "built");
 
                 // if a Client is registered as a default instance, it will be used
@@ -68,7 +72,6 @@ public class clarifaiHandler {
                 //.registerAsDefaultInstance();
 
         foodModel = client.getDefaultModels().foodModel();
-
         Log.d("Clar", "model");
     }
 
@@ -81,11 +84,8 @@ public class clarifaiHandler {
                 .executeSync();
 
         Log.d("predictions", "got response");
-
         List<ClarifaiOutput<Concept>> predictions = response.get();
-
         Log.d("predictions", "got list");
-
         return predictions.get(0).data();
     }
 
@@ -103,8 +103,7 @@ public class clarifaiHandler {
 
                 // Use this model to predict, with the image that the user just selected as the input
 
-                Log.d("predictions", "smth");
-
+                Log.d("predictions", "something happened");
                 return foodModel.predict()
                         .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(imageBytes)))
                         .executeSync();
@@ -121,8 +120,9 @@ public class clarifaiHandler {
                     //showErrorSnackbar(R.string.no_results_from_api);
                     return;
                 }
-
-
+                predictionsFlag = true;
+                Log.d("predictions", "set flag");
+                predictionsList = predictions.get(0).data();
             }
             //private void showErrorSnackbar(@StringRes int errorString) {
             //    Snackbar.make(
@@ -134,6 +134,25 @@ public class clarifaiHandler {
         }.execute();
     }
 
+    public List<Concept> returnPredictions(){
+        return predictionsList;
+    }
 
+    public String[] predictionsArray(){
+        if (predictionsList.size() == 0 || (predictionsFlag == false)){
+            return null;
+        }
+        int size = predictionsList.size();
 
+        String[] predictionArray = new String[size];
+        for (int i = 0; i < size; i++){
+            predictionArray[i] = predictionsList.get(i).name();
+        }
+
+        return predictionArray;
+    }
+
+    public boolean hasPredictions(){
+        return predictionsFlag;
+    }
 }

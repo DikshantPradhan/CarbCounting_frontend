@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import clarifai2.dto.prediction.Concept;
+
 public class MainActivity extends AppCompatActivity {
 
     // general things
@@ -41,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
     Button support;
 
     public static final int PICK_IMAGE = 100;
+
+    // picture selection page
+    Button picSelection;
+    Button postSelection;
 
     // clarification page
     TextView clarificationInstructions;
@@ -86,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void introScreen() {
         setContentView(R.layout.activity_main);
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
+        //final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
 
         try{
             readCSVToMap("ABBREV_2.txt");
@@ -103,9 +109,32 @@ public class MainActivity extends AppCompatActivity {
         picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
-                mainMessageText.setText(getString(R.string.user_message));
-                userClarification(adapter);
+                //startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
+                setContentView(R.layout.image_selection);
+
+                picSelection = (Button) findViewById(R.id.select_image);
+                picSelection.setText("Select from Gallery");
+                picSelection.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
+                    }
+                }
+                );
+
+                postSelection = (Button) findViewById(R.id.post_image_selection);
+                postSelection.setText("Proceed to Clarification");
+                postSelection.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        userClarification();
+                    }
+                }
+                );
+                //setContentView(R.layout.image_selection);
+
+                //mainMessageText.setText(getString(R.string.user_message));
+                //userClarification();
             }
         });
 
@@ -159,8 +188,36 @@ public class MainActivity extends AppCompatActivity {
         daily.setText("Daily Data");
     }
 
-    private void userClarification(ArrayAdapter<CharSequence> adapter) {
+    private void userClarification() {
+
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
+
         setContentView(R.layout.user_clarification);
+
+        List<Concept> potentialFoods;
+
+        try {
+            potentialFoods = clarifai.returnPredictions();
+            Log.d("predictions", "went into try loop");
+            if (clarifai.hasPredictions()){
+                Log.d("predictions", "went into if statement");
+                if (clarifai.predictionsArray() == null){
+                    Log.d("adapter", "null predictions");
+                }
+                String[] predictionArray = clarifai.predictionsArray();
+                Log.d("adapter", String.valueOf(predictionArray.length));
+                //adapter.clear();
+
+                //adapter = new ArrayAdapter<CharSequence>(this, predictionArray);
+
+                Log.d("adapter", "cleared");
+                adapter.addAll(predictionArray);
+                Log.d("predictions", "replaced predictions");
+            }
+        }
+        catch (Exception e){
+            Log.d("predictions", "prediction probably failed");
+        }
 
         finalResultButton = (Button) findViewById(R.id.finalResult);
         finalResultButton.setText("Show Final Result");
@@ -265,7 +322,11 @@ public class MainActivity extends AppCompatActivity {
                 final byte[] imageBytes = retrieveSelectedImage(this, data);
                 if (imageBytes != null) {
                     //onImagePicked(imageBytes);
-
+                    Log.d("prediction", "attempting");
+                    clarifai.onImagePicked(imageBytes);
+                    //List<Concept> predictions = clarifai.getPredictions(imageBytes);
+                    //Log.d("predictions", predictions.get(0).toString());
+                    Log.d("predictions", "predicted");
 
                 }
                 break;
