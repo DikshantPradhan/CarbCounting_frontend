@@ -201,18 +201,16 @@ public class MainActivity extends AppCompatActivity {
             Log.d("predictions", "went into try loop");
             if (clarifai.hasPredictions()){
                 Log.d("predictions", "went into if statement");
-                if (clarifai.predictionsArray() == null){
+                if (clarifai.predictionsList() == null){
                     Log.d("adapter", "null predictions");
                 }
                 String[] predictionArray = clarifai.predictionsArray();
+                List<String> predictionsArrayList = clarifai.predictionsList();
                 Log.d("adapter", String.valueOf(predictionArray.length));
                 //adapter.clear();
+                final ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, predictionArray);
 
-                //adapter = new ArrayAdapter<CharSequence>(this, predictionArray);
-
-                Log.d("adapter", "cleared");
-                adapter.addAll(predictionArray);
-                Log.d("predictions", "replaced predictions");
+                Log.d("predictions", "created new adapter");
             }
         }
         catch (Exception e){
@@ -225,7 +223,14 @@ public class MainActivity extends AppCompatActivity {
         foodSpinner = (Spinner) findViewById(R.id.spinner);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        foodSpinner.setAdapter(adapter);
+
+        String[] predictionArray = clarifai.predictionsArray();
+        List<String> predictionsArrayList = clarifai.predictionsList();
+        Log.d("adapter", String.valueOf(predictionArray.length));
+        //adapter.clear();
+        final ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, predictionArray);
+
+        foodSpinner.setAdapter(adapter2);
 
         //final String selectedFood = foodSpinner.getSelectedItem().toString();
         //Log.d("Spinner", selectedFood);
