@@ -280,6 +280,10 @@ public class MainActivity extends AppCompatActivity {
         results.setText(selectedFood);
         Log.d("Flow", "Final Results Page");
 
+        returnToMainButton();
+    }
+
+    public void returnToMainButton() {
         return_to_main = (Button) findViewById(R.id.return_to_start_button);
         return_to_main.setText("Return to Start Page");
         return_to_main.setOnClickListener(new View.OnClickListener() {

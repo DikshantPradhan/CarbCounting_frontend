@@ -48,8 +48,7 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         Calendar cal = Calendar.getInstance();
-        //int date = cal.
-        int date = 0;
+        int date = cal.DATE;
 
         // value creation
         ContentValues values = new ContentValues();
