@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     // picture selection page
     Button picSelection;
     Button postSelection;
+    ImageView imageSelected;
 
     // clarification page
     TextView clarificationInstructions;
@@ -110,27 +113,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
-                setContentView(R.layout.image_selection);
-
-                picSelection = (Button) findViewById(R.id.select_image);
-                picSelection.setText("Select from Gallery");
-                picSelection.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
-                    }
-                }
-                );
-
-                postSelection = (Button) findViewById(R.id.post_image_selection);
-                postSelection.setText("Proceed to Clarification");
-                postSelection.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        userClarification();
-                    }
-                }
-                );
+                imageSelection();
                 //setContentView(R.layout.image_selection);
 
                 //mainMessageText.setText(getString(R.string.user_message));
@@ -164,6 +147,32 @@ public class MainActivity extends AppCompatActivity {
                 // to be implemented
             }
         });
+    }
+
+    private void imageSelection() {
+        setContentView(R.layout.image_selection);
+
+        imageSelected = (ImageView) findViewById(R.id.image);
+
+        picSelection = (Button) findViewById(R.id.select_image);
+        picSelection.setText("Select from Gallery");
+        picSelection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
+            }
+        }
+        );
+
+        postSelection = (Button) findViewById(R.id.post_image_selection);
+        postSelection.setText("Proceed to Clarification");
+        postSelection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userClarification();
+            }
+        }
+        );
     }
 
     private void nutritionalDatabasePage() {
@@ -329,10 +338,10 @@ public class MainActivity extends AppCompatActivity {
                     //onImagePicked(imageBytes);
                     Log.d("prediction", "attempting");
                     clarifai.onImagePicked(imageBytes);
+                    imageSelected.setImageBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length));
                     //List<Concept> predictions = clarifai.getPredictions(imageBytes);
                     //Log.d("predictions", predictions.get(0).toString());
                     Log.d("predictions", "predicted");
-
                 }
                 break;
         }

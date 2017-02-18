@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -150,6 +151,23 @@ public class clarifaiHandler {
         }
 
         return predictionArray;
+    }
+
+    public List<String> predictionsList(){
+
+        if (predictionsList.size() == 0 || (predictionsFlag == false)){
+            return null;
+        }
+
+        List<String> predictionArrayList = new ArrayList<String>();
+
+        int size = predictionsList.size();
+
+        for (int i = 0; i < size; i++){
+            predictionArrayList.add(predictionsList.get(i).name());
+        }
+
+        return predictionArrayList;
     }
 
     public boolean hasPredictions(){
