@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import java.util.Calendar;
 
 /**
  * Created by Dikshant on 2/5/2017.
@@ -43,8 +44,12 @@ public class DBHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addEntry(String date, String food, String carbs){
+    public void addEntry(String food, String carbs){
         SQLiteDatabase db = this.getWritableDatabase();
+
+        Calendar cal = Calendar.getInstance();
+        //int date = cal.
+        int date = 0;
 
         // value creation
         ContentValues values = new ContentValues();

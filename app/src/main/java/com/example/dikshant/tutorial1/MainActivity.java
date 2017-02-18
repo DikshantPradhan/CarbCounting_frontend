@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         introScreen();
     }
 
-    private void introScreen() {
+    public void introScreen() {
         setContentView(R.layout.activity_main);
         //final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
 
@@ -253,20 +253,7 @@ public class MainActivity extends AppCompatActivity {
                 finalResultButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        setContentView(R.layout.final_result);
-                        results = (TextView) findViewById(R.id.results_text);
-                        results.setText(selectedFood);
-                        Log.d("Flow", "Final Results Page");
-
-                        return_to_main = (Button) findViewById(R.id.return_to_start_button);
-                        return_to_main.setText("Return to Start Page");
-                        return_to_main.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                setContentView(R.layout.activity_main);
-                                introScreen();
-                            }
-                        });
+                        resultsPage(selectedFood);
                     }
                 });
             }
@@ -283,6 +270,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clarificationInstructions.setText("Use the Drop-Down Menu");
+            }
+        });
+    }
+
+    private void resultsPage(String selectedFood) {
+        setContentView(R.layout.final_result);
+        results = (TextView) findViewById(R.id.results_text);
+        results.setText(selectedFood);
+        Log.d("Flow", "Final Results Page");
+
+        return_to_main = (Button) findViewById(R.id.return_to_start_button);
+        return_to_main.setText("Return to Start Page");
+        return_to_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setContentView(R.layout.activity_main);
+                introScreen();
             }
         });
     }
