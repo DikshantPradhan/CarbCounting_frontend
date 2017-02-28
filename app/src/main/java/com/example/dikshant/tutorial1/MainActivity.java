@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     Button return_to_main;
     TextView results;
 
+    //resultsPage rPage;
+
     // my data page
     TextView dataText;
     Button monthly;
@@ -83,6 +86,21 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         userInfo = new DBHandler(getBaseContext());
+        Log.d("DB", String.valueOf(userInfo.getCount()));
+        userInfo.clear();
+        Log.d("DB", String.valueOf(userInfo.getCount()));
+        //userInfo.getCount();
+        Calendar cal = Calendar.getInstance();
+        String date = String.valueOf(cal.DATE) + "_" + String.valueOf(cal.HOUR_OF_DAY)
+                + "_" + String.valueOf(cal.MINUTE) + "_" + String.valueOf(cal.SECOND);
+        userInfo.addEntry("potato", "30", date);
+        Log.d("DB", String.valueOf(userInfo.getCount()));
+        //userInfo.getCount();
+
+        Log.d("DB", "test nutritional db construction");
+        nutritionalDB testDB = new nutritionalDB(getBaseContext());
+        //testDB.readCSV();
+        Log.d("DB", "made it");
 
         try {
             clarifai = new clarifaiHandler();
@@ -115,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
                 //startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
                 imageSelection();
                 //setContentView(R.layout.image_selection);
-
                 //mainMessageText.setText(getString(R.string.user_message));
                 //userClarification();
             }
@@ -249,10 +266,19 @@ public class MainActivity extends AppCompatActivity {
                 //Object item = parent.getItemAtPosition(pos);
                 final String selectedFood = foodSpinner.getItemAtPosition(pos).toString();
                 Log.d("Spinner", selectedFood);
+                //Log.d("results page", "trying to create rpage");
+                //final resultsPage rpage = new resultsPage();
 
                 finalResultButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        //rpage.setCarbs("30");
+                        //rpage.setFood(selectedFood);
+
+                        Log.d("results page", "created rpage");
+                        //setContentView(R.layout.final_result);
+                        //rpage.showResultsPage();
                         resultsPage(selectedFood);
                     }
                 });

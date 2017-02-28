@@ -18,7 +18,8 @@ import java.util.List;
 
 public class nutritionalDB extends SQLiteOpenHelper {
 
-    private static final String DB_NAME = "USDA_Nutrition_DB";
+    //private static final String DB_NAME = "USDA_Nutrition_DB";
+    private static final String DB_NAME = "userInfo_";
     private static final int DB_VERSION = 1;
 
     // table name
@@ -44,10 +45,13 @@ public class nutritionalDB extends SQLiteOpenHelper {
     public nutritionalDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         cxt = context;
+        //Log.d("DB", "reading CSV");
+        //readCSV();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d("DB", "creating ndb");
         String CREATE_TABLE =  "CREATE TABLE " + TABLE_NAME + "(" + DESC + " TEXT," + CARB + " TEXT,"
                 + WATER + " TEXT," + ENERGY + " TEXT," + PROTEIN + " TEXT," + FIBER + " TEXT," +
                 SUGAR + " TEXT," + CHOL + " TEXT," + WT + " TEXT," + WT_DESC + " TEXT" + ")";
@@ -63,16 +67,17 @@ public class nutritionalDB extends SQLiteOpenHelper {
         //onCreate(db);
     }
 
-    private void readCSV(){
+    public void readCSV(){
         SQLiteDatabase db = this.getWritableDatabase();
+        Log.d("DB", "got writable db");
         try {
             InputStream is = cxt.getAssets().open("USDA_DB_ABBREV.txt");
-            //File f = new File(path.toURI());
-            //File f = new File(path.getFile());
             BufferedReader buffer = new BufferedReader(new InputStreamReader(is));//new BufferedReader(new FileReader("ABBREV_2.txt"));
             String line = "";
             String tableName = DB_NAME;
-            String columns = "_id, name, dt1, dt2, dt3";
+            String columns = DESC + ", " + CARB + ", " + WATER + ", " + ENERGY + ", " + PROTEIN + ", " + FIBER
+                    + ", " + SUGAR + ", " + CHOL + ", " + WT + ", " + WT_DESC;
+            //String columns2 = "_id, name, dt1, dt2, dt3";
             String str1 = "INSERT INTO " + tableName + " (" + columns + ") values(";
             String str2 = ");";
             while ((line = buffer.readLine()) != null) {
@@ -88,12 +93,12 @@ public class nutritionalDB extends SQLiteOpenHelper {
                     sb.append("'" + str[0] + "',");
                     sb.append(str[1] + "',");
                     sb.append(str[2] + "',");
-                    sb.append(str[3] + "'");
-                    sb.append(str[4] + "'");
-                    sb.append(str[5] + "'");
-                    sb.append(str[6] + "'");
-                    sb.append(str[7] + "'");
-                    sb.append(str[8] + "'");
+                    sb.append(str[3] + "',");
+                    sb.append(str[4] + "',");
+                    sb.append(str[5] + "',");
+                    sb.append(str[6] + "',");
+                    sb.append(str[7] + "',");
+                    sb.append(str[8] + "',");
                     sb.append(str[9] + "'");
                     sb.append(str2);
                     db.execSQL(sb.toString());
@@ -106,7 +111,7 @@ public class nutritionalDB extends SQLiteOpenHelper {
             buffer.close();
         }
         catch (Exception e){
-
+            Log.d("DB", "couldn't create database");
         }
     }
 }
