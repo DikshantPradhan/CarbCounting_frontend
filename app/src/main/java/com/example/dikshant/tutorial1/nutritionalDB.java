@@ -2,6 +2,7 @@ package com.example.dikshant.tutorial1;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -27,47 +28,63 @@ public class nutritionalDB extends SQLiteOpenHelper {
 
     // columns: Shrt_Desc	Carbohydrt_(g)	Water_(g)	Energ_Kcal	Protein_(g)	Fiber_TD_(g)	Sugar_Tot_(g)	Cholestrl_(mg)	GmWt_1	GmWt_Desc2
     private static String DESC = "Shrt_Desc";
-    private static String CARB = "Carbohydrt_(g)";
-    private static String WATER = "Water_(g)";
+    private static String CARB = "Carbohydrt_g";
+    private static String WATER = "Water_g";
     private static String ENERGY = "Energ_Kcal";
-    private static String PROTEIN = "Protein_(g)";
-    private static String FIBER = "Fiber_TD_(g)";
-    private static String SUGAR = "Sugar_Tot_(g)";
-    private static String CHOL = "Cholestrl_(mg)";
+    private static String PROTEIN = "Protein_g";
+    private static String FIBER = "Fiber_TD_g";
+    private static String SUGAR = "Sugar_Tot_g";
+    private static String CHOL = "Cholestrl_mg";
     private static String WT = "GmWt_1";
     private static String WT_DESC = "GmWt_Desc2";
+
+    private static String[] cols = {DESC, CARB, WATER, ENERGY, PROTEIN, FIBER, SUGAR, CHOL, WT, WT_DESC};
 
 
     private static Context cxt;
 
 
-
     public nutritionalDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         cxt = context;
-        //Log.d("DB", "reading CSV");
+        Log.d("nDB", "constructor");
         //readCSV();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d("DB", "creating ndb");
-        String CREATE_TABLE =  "CREATE TABLE " + TABLE_NAME + "(" + DESC + " TEXT," + CARB + " TEXT,"
+        Log.d("nDB", "creating ndb");
+        String CREATE_TABLE =  "CREATE TABLE " + TABLE_NAME + "(" + DESC + " TEXT PRIMARY KEY," + CARB + " TEXT,"
                 + WATER + " TEXT," + ENERGY + " TEXT," + PROTEIN + " TEXT," + FIBER + " TEXT," +
                 SUGAR + " TEXT," + CHOL + " TEXT," + WT + " TEXT," + WT_DESC + " TEXT" + ")";
         db.execSQL(CREATE_TABLE);
-        readCSV();
+        //readCSV();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // Drop older table if existed
-        //db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 // Creating tables again
-        //onCreate(db);
+        onCreate(db);
     }
 
     public void readCSV(){
+        try {
+            InputStream is = cxt.getAssets().open("USDA_DB_ABBREV.txt");
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(is));//new BufferedReader(new FileReader("ABBREV_2.txt"));
+            String line = "";
+            while ((line = buffer.readLine()) != null) {
+                addEntry(line);
+            }
+            buffer.close();
+        }
+        catch (Exception e){
+            Log.d("DB", "couldn't create database");
+        }
+    }
+
+    public void readCSV2(){
         SQLiteDatabase db = this.getWritableDatabase();
         Log.d("DB", "got writable db");
         try {
@@ -90,20 +107,20 @@ public class nutritionalDB extends SQLiteOpenHelper {
                 while ((line = buffer.readLine()) != null) {
                     StringBuilder sb = new StringBuilder(str1);
                     String[] str = line.split(" ");
-                    sb.append("'" + str[0] + "',");
-                    sb.append(str[1] + "',");
-                    sb.append(str[2] + "',");
-                    sb.append(str[3] + "',");
-                    sb.append(str[4] + "',");
-                    sb.append(str[5] + "',");
-                    sb.append(str[6] + "',");
-                    sb.append(str[7] + "',");
-                    sb.append(str[8] + "',");
-                    sb.append(str[9] + "'");
-                    sb.append(str2);
-                    db.execSQL(sb.toString());
+                    //sb.append("'" + str[0] + "',");
+                    //sb.append(str[1] + "',");
+                    //sb.append(str[2] + "',");
+                    //sb.append(str[3] + "',");
+                    //sb.append(str[4] + "',");
+                    //sb.append(str[5] + "',");
+                    //sb.append(str[6] + "',");
+                    //sb.append(str[7] + "',");
+                    //sb.append(str[8] + "',");
+                    //sb.append(str[9] + "'");
+                    //sb.append(str2);
+                    //db.execSQL(sb.toString());
                 }
-                db.setTransactionSuccessful();
+                //db.setTransactionSuccessful();
                 db.endTransaction();
                 //db.put(parts[0], nutrition);
                 //keys.add(parts[0]);
@@ -113,5 +130,55 @@ public class nutritionalDB extends SQLiteOpenHelper {
         catch (Exception e){
             Log.d("DB", "couldn't create database");
         }
+    }
+
+    public void addEntry(String row){
+        //Log.d("nDB", "adding entry");
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String row_values[] = row.split("\t");
+        int rowSize = row_values.length;
+
+        //Log.d("nDB entry", row_values[0]);
+
+        ContentValues values = new ContentValues();
+
+        for (int i = 0; i < rowSize; i++){
+            values.put(cols[i], row_values[i]);
+        }
+
+        //values.put(DESC, row_values[0]);
+        //values.put(CARB, row_values[1]);
+        //values.put(WATER, row_values[2]);
+        //values.put(ENERGY, row_values[3]);
+        //values.put(PROTEIN, row_values[4]);
+        //values.put(FIBER, row_values[5]);
+        //values.put(SUGAR, row_values[6]);
+        //values.put(CHOL, row_values[7]);
+        //values.put(WT, row_values[8]);
+        //values.put(WT_DESC, row_values[9]);
+
+        // db insertion
+        db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        //db.insert(TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public void clear(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_NAME);
+    }
+
+    public int getCount(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        //Cursor cs = db.query(USER_TABLE, new String[]{})
+        String countQuery = "SELECT * FROM "  + TABLE_NAME;
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        return cursor.getCount();
+
+        //return 0;
     }
 }

@@ -2,6 +2,7 @@ package com.example.dikshant.tutorial1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     // general things
     DBHandler userInfo;
     clarifaiHandler clarifai;
+    nutritionalDB nutrInfo;
 
     // main page
     TextView mainMessageText;
@@ -85,22 +87,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        userInfo = new DBHandler(getBaseContext());
-        Log.d("DB", String.valueOf(userInfo.getCount()));
-        userInfo.clear();
-        Log.d("DB", String.valueOf(userInfo.getCount()));
-        //userInfo.getCount();
-        Calendar cal = Calendar.getInstance();
-        String date = String.valueOf(cal.DATE) + "_" + String.valueOf(cal.HOUR_OF_DAY)
-                + "_" + String.valueOf(cal.MINUTE) + "_" + String.valueOf(cal.SECOND);
-        userInfo.addEntry("potato", "30", date);
-        Log.d("DB", String.valueOf(userInfo.getCount()));
-        //userInfo.getCount();
 
-        Log.d("DB", "test nutritional db construction");
-        nutritionalDB testDB = new nutritionalDB(getBaseContext());
-        //testDB.readCSV();
-        Log.d("DB", "made it");
+        createDatabases();
 
         try {
             clarifai = new clarifaiHandler();
@@ -111,13 +99,42 @@ public class MainActivity extends AppCompatActivity {
         introScreen();
     }
 
+    private void createDatabases() {
+
+
+        userInfo = new DBHandler(getBaseContext());
+        Log.d("DB", String.valueOf(userInfo.getCount()));
+        userInfo.clear();
+        Log.d("DB", String.valueOf(userInfo.getCount()));
+        //userInfo.getCount();
+        Calendar cal = Calendar.getInstance();
+        String date = String.valueOf(cal.DATE) + "_" + String.valueOf(cal.HOUR_OF_DAY)
+                + "_" + String.valueOf(cal.MINUTE) + "_" + String.valueOf(cal.SECOND);
+        userInfo.addEntry("potato", "30", date);
+        Log.d("DB", String.valueOf(userInfo.getCount()));
+        nutrInfo = new nutritionalDB(getBaseContext());
+        //nutrInfo.clear();
+
+        try {
+            SQLiteDatabase test = nutrInfo.getReadableDatabase();
+            Log.d("nDB", "got readable");
+            if (nutrInfo.getCount() < 8000){
+                nutrInfo.readCSV();
+            }
+            Log.d("nDB", String.valueOf(nutrInfo.getCount()));
+        } catch (Exception e) {
+            Log.d("nDB", "DNE");
+            // database doesn't exist yet.
+        }
+    }
+
     public void introScreen() {
         setContentView(R.layout.activity_main);
         //final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
 
         try{
-            readCSVToMap("ABBREV_2.txt");
-            Log.d("Food Databse", "created");
+            //readCSVToMap("ABBREV_2.txt");
+            //Log.d("Food Database", "created");
         }
         catch (Exception e){
             Log.d("Food Database", "CSV not read into database");
