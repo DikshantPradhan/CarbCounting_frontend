@@ -181,4 +181,30 @@ public class nutritionalDB extends SQLiteOpenHelper {
 
         //return 0;
     }
+
+    public Cursor queryContaining(String word){
+        Log.d("nDB", "querying");
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME, new String[] {DESC, CARB, CHOL},
+                DESC + " LIKE ?", new String[] {"%" + word + "%"},
+                null, null, null);
+
+        Log.d("nDB", String.valueOf(cursor.getCount()));
+
+        try{
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                String data = cursor.getString(cursor.getColumnIndex(DESC));
+                String data2 = cursor.getString(cursor.getColumnIndex(CARB));
+                Log.d("nDB query", data2);
+            }
+        }
+        catch (Exception e){
+            Log.d("nDB query", "failed cursor browsing");
+        }
+        //Log.d("nDB query", cursor.getString(cursor.getColumnIndex(DESC)));
+
+        return cursor;
+    }
 }

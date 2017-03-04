@@ -45,6 +45,14 @@ public class DBHandler extends SQLiteOpenHelper {
     private static String WT = "GmWt_1";
     private static String WT_DESC = "GmWt_Desc2";
 
+    private static final String TABLE_NAME_2 = "densityInfo";
+
+    // columns:
+    private static String FOOD = "Food";
+    private static String MASS = "Mass_g";
+    private static String VOL = "Volume_ml";
+    private static String DESC_ = "Desc";
+
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -59,8 +67,13 @@ public class DBHandler extends SQLiteOpenHelper {
                 + WATER + " TEXT," + ENERGY + " TEXT," + PROTEIN + " TEXT," + FIBER + " TEXT," +
                 SUGAR + " TEXT," + CHOL + " TEXT," + WT + " TEXT," + WT_DESC + " TEXT" + ")";
 
+        Log.d("dDB", "creating ddb");
+        String CREATE_TABLE_3 =  "CREATE TABLE " + TABLE_NAME_2 + "(" + FOOD + " TEXT PRIMARY KEY," + MASS + " TEXT,"
+                + VOL + " TEXT," + DESC_ + " TEXT" + ")";
+
         db.execSQL(CREATE_TABLE);
         db.execSQL(CREATE_TABLE_2);
+        db.execSQL(CREATE_TABLE_3);
     }
 
     @Override

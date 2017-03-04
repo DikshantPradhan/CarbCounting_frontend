@@ -2,6 +2,7 @@ package com.example.dikshant.tutorial1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     DBHandler userInfo;
     clarifaiHandler clarifai;
     nutritionalDB nutrInfo;
+    densityDB densityInfo;
 
     // main page
     TextView mainMessageText;
@@ -103,17 +105,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         userInfo = new DBHandler(getBaseContext());
-        Log.d("DB", String.valueOf(userInfo.getCount()));
+        //Log.d("DB", String.valueOf(userInfo.getCount()));
         userInfo.clear();
-        Log.d("DB", String.valueOf(userInfo.getCount()));
+        //Log.d("DB", String.valueOf(userInfo.getCount()));
         //userInfo.getCount();
         Calendar cal = Calendar.getInstance();
         String date = String.valueOf(cal.DATE) + "_" + String.valueOf(cal.HOUR_OF_DAY)
                 + "_" + String.valueOf(cal.MINUTE) + "_" + String.valueOf(cal.SECOND);
-        userInfo.addEntry("potato", "30", date);
-        Log.d("DB", String.valueOf(userInfo.getCount()));
+        //userInfo.addEntry("potato", "30", date);
+        //Log.d("DB", String.valueOf(userInfo.getCount()));
         nutrInfo = new nutritionalDB(getBaseContext());
         //nutrInfo.clear();
+        densityInfo = new densityDB(getBaseContext());
 
         try {
             SQLiteDatabase test = nutrInfo.getReadableDatabase();
@@ -121,11 +124,27 @@ public class MainActivity extends AppCompatActivity {
             if (nutrInfo.getCount() < 8000){
                 nutrInfo.readCSV();
             }
-            Log.d("nDB", String.valueOf(nutrInfo.getCount()));
+            //Log.d("nDB", String.valueOf(nutrInfo.getCount()));
         } catch (Exception e) {
             Log.d("nDB", "DNE");
             // database doesn't exist yet.
         }
+
+        try {
+            SQLiteDatabase test = densityInfo.getReadableDatabase();
+            Log.d("dDB", "got readable");
+            if (densityInfo.getCount() < 1){
+                densityInfo.readCSV();
+            }
+            //Log.d("dDB", String.valueOf(densityInfo.getCount()));
+        } catch (Exception e) {
+            Log.d("dDB", "DNE");
+            // database doesn't exist yet.
+        }
+
+        //Cursor potatoes = densityInfo.queryContaining("potato");
+        //Log.d("DBquery", potatoes.toString());
+
     }
 
     public void introScreen() {
@@ -321,6 +340,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.final_result);
         results = (TextView) findViewById(R.id.results_text);
         results.setText(selectedFood);
+
+        Cursor nutrition = nutrInfo.queryContaining(selectedFood);
+        Cursor density = densityInfo.queryContaining(selectedFood);
+
         Log.d("Flow", "Final Results Page");
 
         returnToMainButton();
