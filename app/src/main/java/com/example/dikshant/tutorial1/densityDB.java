@@ -11,13 +11,15 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Dikshant on 2/19/2017.
  */
 
-public class densityDB extends SQLiteOpenHelper {
+public class densityDB extends DBHandler {
 
     //private static final String DB_NAME = "USDA_Nutrition_DB";
     private static final String DB_NAME = "userInfo_";
@@ -28,11 +30,13 @@ public class densityDB extends SQLiteOpenHelper {
 
     // columns:
     private static String FOOD = "Food";
-    private static String MASS = "Mass_g";
-    private static String VOL = "Volume_ml";
-    private static String DESC = "Desc";
+    private static String DENSITY = "Density_g_ml";
+    //private static String MASS = "Mass_g";
+    //private static String VOL = "Volume_ml";
+    //private static String DESC = "Desc";
 
-    private static String[] cols = {FOOD, MASS, VOL, DESC};
+    //private static String[] cols = {FOOD, MASS, VOL, DESC};
+    private static String[] cols = {FOOD, DENSITY};
 
     private static Context cxt;
 
@@ -43,7 +47,7 @@ public class densityDB extends SQLiteOpenHelper {
         Log.d("dDB", "constructor");
         //readCSV();
     }
-
+/*
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("dDB", "creating ddb");
@@ -52,7 +56,7 @@ public class densityDB extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE);
         //readCSV();
     }
-
+*/
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 // Drop older table if existed
@@ -63,7 +67,7 @@ public class densityDB extends SQLiteOpenHelper {
 
     public void readCSV(){
         try {
-            InputStream is = cxt.getAssets().open("Food_Vol.txt");
+            InputStream is = cxt.getAssets().open("Food_Vol2.txt");
             BufferedReader buffer = new BufferedReader(new InputStreamReader(is));//new BufferedReader(new FileReader("ABBREV_2.txt"));
             String line = "";
             while ((line = buffer.readLine()) != null) {
@@ -109,11 +113,13 @@ public class densityDB extends SQLiteOpenHelper {
         db.close();
     }
 
+    @Override
     public void clear(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from "+ TABLE_NAME);
     }
 
+    @Override
     public int getCount(){
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -131,8 +137,8 @@ public class densityDB extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_NAME, new String[] {FOOD, MASS, VOL},
-                DESC + " LIKE ?", new String[] {"%" + word + "%"},
+        Cursor cursor = db.query(TABLE_NAME, new String[] {FOOD, DENSITY},
+                FOOD + " LIKE ?", new String[] {"%" + word + "%"},
                 null, null, null);
 
         Log.d("nDB", String.valueOf(cursor.getCount()));
@@ -140,8 +146,8 @@ public class densityDB extends SQLiteOpenHelper {
         try{
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 String data = cursor.getString(cursor.getColumnIndex(FOOD));
-                String data2 = cursor.getString(cursor.getColumnIndex(MASS));
-                Log.d("nDB query", data2);
+                String data2 = cursor.getString(cursor.getColumnIndex(DENSITY));
+                //Log.d("nDB query", data2);
             }
         }
         catch (Exception e){
@@ -150,5 +156,60 @@ public class densityDB extends SQLiteOpenHelper {
         //Log.d("nDB query", cursor.getString(cursor.getColumnIndex(DESC)));
 
         return cursor;
+    }
+
+    public Map<String, Double> getMapFromCursor(Cursor cursor){
+        Map<String, Double> results = new HashMap<String, Double>();
+
+        try{
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                String food = cursor.getString(cursor.getColumnIndex(FOOD));
+                String density = cursor.getString(cursor.getColumnIndex(DENSITY));
+                Double density2 = Double.valueOf(density);
+
+                /*
+                String mass = cursor.getString(cursor.getColumnIndex(MASS));
+                String volume = cursor.getString(cursor.getColumnIndex(VOL));
+                Integer m = Integer.valueOf(mass);
+                Integer v = Integer.valueOf(volume);
+
+                if (v > 0){
+                    Integer density = m/v;
+                    results.put(food, density);
+                }
+
+                Log.d("density", String.valueOf(v));
+                Log.d("density map", food);
+                */
+
+                //int d = m/(v);
+
+                //Integer density = (Integer.valueOf(mass))/(Integer.valueOf(volume));
+                results.put(food, density2);
+            }
+        }
+        catch (Exception e){
+            Log.e("density map exception", "exception", e);
+            Log.d("density map", "failed");
+        }
+
+        return results;
+    }
+
+    public List<String> getKeysFromCursor(Cursor cursor){
+        List<String> keys = new ArrayList<String>();
+
+        try{
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                String food = cursor.getString(cursor.getColumnIndex(FOOD));
+                //Log.d("nDB query", data2);
+                keys.add(food);
+            }
+        }
+        catch (Exception e){
+            Log.d("density keys", "failed");
+        }
+
+        return keys;
     }
 }

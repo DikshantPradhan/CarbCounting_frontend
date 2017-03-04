@@ -11,13 +11,15 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Dikshant on 2/19/2017.
  */
 
-public class nutritionalDB extends SQLiteOpenHelper {
+public class nutritionalDB extends DBHandler {
 
     //private static final String DB_NAME = "USDA_Nutrition_DB";
     private static final String DB_NAME = "userInfo_";
@@ -165,11 +167,13 @@ public class nutritionalDB extends SQLiteOpenHelper {
         db.close();
     }
 
+    @Override
     public void clear(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from "+ TABLE_NAME);
     }
 
+    @Override
     public int getCount(){
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -193,18 +197,46 @@ public class nutritionalDB extends SQLiteOpenHelper {
 
         Log.d("nDB", String.valueOf(cursor.getCount()));
 
-        try{
-            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                String data = cursor.getString(cursor.getColumnIndex(DESC));
-                String data2 = cursor.getString(cursor.getColumnIndex(CARB));
-                Log.d("nDB query", data2);
-            }
-        }
-        catch (Exception e){
-            Log.d("nDB query", "failed cursor browsing");
-        }
         //Log.d("nDB query", cursor.getString(cursor.getColumnIndex(DESC)));
 
         return cursor;
+    }
+
+    public Map<String, Double> getMapFromCursor(Cursor cursor){
+        Map<String, Double> results = new HashMap<String, Double>();
+
+        try{
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                String desc = cursor.getString(cursor.getColumnIndex(DESC));
+                Double carb = Double.valueOf(cursor.getString(cursor.getColumnIndex(CARB)));
+
+                results.put(desc, carb);
+                //Log.d("nutrition map", String.valueOf(desc));
+            }
+        }
+        catch (Exception e){
+            Log.e("nutrition map exception", "exception", e);
+            Log.d("nutrition map", "failed");
+        }
+
+        return results;
+    }
+
+    public List<String> getKeysFromCursor(Cursor cursor){
+        List<String> keys = new ArrayList<String>();
+
+        try{
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                String desc = cursor.getString(cursor.getColumnIndex(DESC));
+                String carb = cursor.getString(cursor.getColumnIndex(CARB));
+                //Log.d("nDB query", data2);
+                keys.add(desc);
+            }
+        }
+        catch (Exception e){
+            Log.d("nutrition keys", "failed");
+        }
+
+        return keys;
     }
 }

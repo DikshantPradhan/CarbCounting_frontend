@@ -23,7 +23,7 @@ public class resultsPage extends MainActivity {
     boolean foodFlag;
     boolean carbFlag;
 
-    DBHandler db;
+    userDB db;
 
     public resultsPage(){
 

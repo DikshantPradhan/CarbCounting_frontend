@@ -37,7 +37,7 @@ import clarifai2.dto.prediction.Concept;
 public class MainActivity extends AppCompatActivity {
 
     // general things
-    DBHandler userInfo;
+    userDB userInfo;
     clarifaiHandler clarifai;
     nutritionalDB nutrInfo;
     densityDB densityInfo;
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private void createDatabases() {
 
 
-        userInfo = new DBHandler(getBaseContext());
+        userInfo = new userDB(getBaseContext());
         //Log.d("DB", String.valueOf(userInfo.getCount()));
         userInfo.clear();
         //Log.d("DB", String.valueOf(userInfo.getCount()));
@@ -341,8 +341,23 @@ public class MainActivity extends AppCompatActivity {
         results = (TextView) findViewById(R.id.results_text);
         results.setText(selectedFood);
 
+        // get cursors
         Cursor nutrition = nutrInfo.queryContaining(selectedFood);
         Cursor density = densityInfo.queryContaining(selectedFood);
+
+        // get maps
+        Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);
+        Map<String, Double> densityMap = densityInfo.getMapFromCursor(density);
+
+        // get keys
+        List<String> nutrKeys = nutrInfo.getKeysFromCursor(nutrition);
+        List<String> densityKeys = densityInfo.getKeysFromCursor(density);
+
+        Log.d("results", nutrKeys.get(1));
+        Log.d("results", densityKeys.get(1));
+
+        Log.d("results", String.valueOf(nutrMap.get(nutrKeys.get(1))));
+        Log.d("results", String.valueOf(densityMap.get(densityKeys.get(1))));
 
         Log.d("Flow", "Final Results Page");
 
