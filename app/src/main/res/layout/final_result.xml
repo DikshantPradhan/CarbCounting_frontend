@@ -9,6 +9,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/results_text" />
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nutrSpinner" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/densitySpinner" />
+
     <Button
         android:text="Button"
         android:layout_width="match_parent"

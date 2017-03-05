@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     TextView clarificationInstructions;
     Button changetextbtn2;
     Spinner foodSpinner;
+    EditText volumeManual;
 
     // results page
     Button finalResultButton;
@@ -260,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.user_clarification);
 
+        volumeManual = (EditText) findViewById(R.id.volume_input);
+
         List<Concept> potentialFoods;
 
         try {
@@ -319,7 +324,13 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("results page", "created rpage");
                         //setContentView(R.layout.final_result);
                         //rpage.showResultsPage();
-                        resultsPage(selectedFood);
+
+                        String volstring = (String) volumeManual.getText().toString();
+                        Log.d("edittext",volstring);
+
+                        Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
+
+                        resultsPage(selectedFood, volume);
                     }
                 });
             }
@@ -328,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        clarificationInstructions = (TextView) findViewById(R.id.message_2);
+        //clarificationInstructions = (TextView) findViewById(R.id.message_2);
         changetextbtn2 = (Button) findViewById(R.id.button_2);
         changetextbtn2.setText("Select Potato");
 
@@ -340,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void resultsPage(String selectedFood) {
+    private void resultsPage(String selectedFood, final Double volume) {
         setContentView(R.layout.final_result);
         results = (TextView) findViewById(R.id.results_text);
         results.setText(selectedFood);
@@ -401,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
 
                         Double fooddensity = densityMap.get(selectedDens);
 
-                        results.setText(String.valueOf(nutrdensity*fooddensity));
+                        results.setText(String.valueOf(nutrdensity*fooddensity*volume));
                         //Log.d("results page", "trying to create rpage");
                         //final resultsPage rpage = new resultsPage();
 
