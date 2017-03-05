@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -65,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     Button finalResultButton;
     Button return_to_main;
     TextView results;
+
+    Spinner nutritionalSpinner;
+    Spinner densitySpinner;
 
     //resultsPage rPage;
 
@@ -341,23 +345,83 @@ public class MainActivity extends AppCompatActivity {
         results = (TextView) findViewById(R.id.results_text);
         results.setText(selectedFood);
 
+        // set spinner
+        nutritionalSpinner = (Spinner) findViewById(R.id.nutrSpinner);
+        densitySpinner = (Spinner) findViewById(R.id.densitySpinner);
+
         // get cursors
         Cursor nutrition = nutrInfo.queryContaining(selectedFood);
         Cursor density = densityInfo.queryContaining(selectedFood);
 
         // get maps
-        Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);
-        Map<String, Double> densityMap = densityInfo.getMapFromCursor(density);
+        final Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);
+        final Map<String, Double> densityMap = densityInfo.getMapFromCursor(density);
 
         // get keys
         List<String> nutrKeys = nutrInfo.getKeysFromCursor(nutrition);
         List<String> densityKeys = densityInfo.getKeysFromCursor(density);
 
-        Log.d("results", nutrKeys.get(1));
-        Log.d("results", densityKeys.get(1));
+        Log.d("results size", String.valueOf(nutrKeys.size()));
+        Log.d("results size", String.valueOf(densityKeys.size()));
 
-        Log.d("results", String.valueOf(nutrMap.get(nutrKeys.get(1))));
-        Log.d("results", String.valueOf(densityMap.get(densityKeys.get(1))));
+        String[] nutrArr = new String[nutrKeys.size()];
+        nutrArr = nutrKeys.toArray(nutrArr);
+
+        String[] densArr = new String[densityKeys.size()];
+        densArr = densityKeys.toArray(densArr);
+
+        Log.d("results size", String.valueOf(nutrArr.length));
+        Log.d("results size", String.valueOf(densArr.length));
+
+
+        // set adapters
+
+        final ArrayAdapter<CharSequence> nutrAdapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, nutrArr);
+        nutritionalSpinner.setAdapter(nutrAdapter);
+        final ArrayAdapter<CharSequence> densAdapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, densArr);
+        densitySpinner.setAdapter(densAdapter);
+
+        //final String selectedNutr;
+
+        nutritionalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                //Object item = parent.getItemAtPosition(pos);
+                final String selectedNutr = nutritionalSpinner.getItemAtPosition(pos).toString();
+                Log.d("nutrSpinner", selectedNutr);
+                //Log.d("results page", "trying to create rpage");
+                //final resultsPage rpage = new resultsPage();
+                densitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+                        Double nutrdensity = nutrMap.get(selectedNutr);
+
+                        //Object item = parent.getItemAtPosition(pos);
+                        final String selectedDens = densitySpinner.getItemAtPosition(pos).toString();
+                        Log.d("nutrSpinner", selectedDens);
+
+                        Double fooddensity = densityMap.get(selectedDens);
+
+                        results.setText(String.valueOf(nutrdensity*fooddensity));
+                        //Log.d("results page", "trying to create rpage");
+                        //final resultsPage rpage = new resultsPage();
+
+
+                    }
+                    public void onNothingSelected(AdapterView<?> parent) {
+                        Log.d("Spinner", "nothing selected");
+                    }
+                });
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.d("Spinner", "nothing selected");
+            }
+        });
+
+        //Log.d("results", nutrKeys.get(1));
+        //Log.d("results", densityKeys.get(1));
+
+        //Log.d("results", String.valueOf(nutrMap.get(nutrKeys.get(1))));
+        //Log.d("results", String.valueOf(densityMap.get(densityKeys.get(1))));
 
         Log.d("Flow", "Final Results Page");
 
