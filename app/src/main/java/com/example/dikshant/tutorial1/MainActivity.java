@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -114,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void createDatabases() {
 
-
         userInfo = new userDB(getBaseContext());
         //Log.d("DB", String.valueOf(userInfo.getCount()));
         userInfo.clear();
@@ -162,13 +162,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
 
-        try{
-            //readCSVToMap("ABBREV_2.txt");
-            //Log.d("Food Database", "created");
-        }
-        catch (Exception e){
-            Log.d("Food Database", "CSV not read into database");
-        }
 
         mainMessageText = (TextView) findViewById(R.id.message_1);
 
@@ -298,6 +291,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.user_clarification);
 
         volumeManual = (EditText) findViewById(R.id.volume_input);
+        volumeManual.setInputType(InputType.TYPE_CLASS_NUMBER |
+                InputType.TYPE_NUMBER_FLAG_DECIMAL |
+                InputType.TYPE_NUMBER_FLAG_SIGNED);
 
         List<Concept> potentialFoods;
 
@@ -386,11 +382,13 @@ public class MainActivity extends AppCompatActivity {
     private void resultsPage(String selectedFood, final Double volume) {
         setContentView(R.layout.final_result);
         results = (TextView) findViewById(R.id.results_text);
-        results.setText(selectedFood);
+        results.setVisibility(View.INVISIBLE);
+        //results.setText(selectedFood);
 
         // set spinner
         nutritionalSpinner = (Spinner) findViewById(R.id.nutrSpinner);
         densitySpinner = (Spinner) findViewById(R.id.densitySpinner);
+        densitySpinner.setVisibility(View.INVISIBLE);
 
         // get cursors
         Cursor nutrition = nutrInfo.queryContaining(selectedFood);
@@ -403,6 +401,11 @@ public class MainActivity extends AppCompatActivity {
         // get keys
         List<String> nutrKeys = nutrInfo.getKeysFromCursor(nutrition);
         List<String> densityKeys = densityInfo.getKeysFromCursor(density);
+
+        final String nutrSelect = "Select a food for grams Carb/grams of Food";
+        final String densSelect = "Select a food for grams of Food/volume of Food";
+        nutrKeys.add(0, nutrSelect);
+        densityKeys.add(0, densSelect);
 
         Log.d("results size", String.valueOf(nutrKeys.size()));
         Log.d("results size", String.valueOf(densityKeys.size()));
@@ -431,6 +434,12 @@ public class MainActivity extends AppCompatActivity {
                 //Object item = parent.getItemAtPosition(pos);
                 final String selectedNutr = nutritionalSpinner.getItemAtPosition(pos).toString();
                 Log.d("nutrSpinner", selectedNutr);
+                if (selectedNutr != nutrSelect){
+                    densitySpinner.setVisibility(View.VISIBLE);
+                    densitySpinner.setSelection(0);
+                    results.setVisibility(View.INVISIBLE);
+                }
+
                 //Log.d("results page", "trying to create rpage");
                 densitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -441,9 +450,12 @@ public class MainActivity extends AppCompatActivity {
                         final String selectedDens = densitySpinner.getItemAtPosition(pos).toString();
                         Log.d("nutrSpinner", selectedDens);
 
-                        Double fooddensity = densityMap.get(selectedDens);
+                        if (selectedDens != densSelect){
+                            Double fooddensity = densityMap.get(selectedDens);
+                            results.setVisibility(View.VISIBLE);
+                            results.setText(String.valueOf(nutrdensity*fooddensity*volume));
+                        }
 
-                        results.setText(String.valueOf(nutrdensity*fooddensity*volume));
                         //Log.d("results page", "trying to create rpage");
 
 
@@ -479,41 +491,6 @@ public class MainActivity extends AppCompatActivity {
                 introScreen();
             }
         });
-    }
-
-    //ADDED FUNCTION FOR DATABASE
-    protected void readCSVToMap(String filename) throws Exception{ // IMPORTANT FUNCTION
-        db = new HashMap<String, List<String>>();
-        keys = new ArrayList<String>();
-        InputStream is = getAssets().open("ABBREV_2.txt");
-        //File f = new File(path.toURI());
-        //File f = new File(path.getFile());
-        BufferedReader in = new BufferedReader(new InputStreamReader(is));//new BufferedReader(new FileReader("ABBREV_2.txt"));
-        String line = "";
-        while ((line = in.readLine()) != null) {
-            String parts[] = line.split("\t");
-            List<String> nutrition = new ArrayList();
-            for (int i = 1; i < parts.length; i++){
-                nutrition.add(parts[i]);
-            }
-            db.put(parts[0], nutrition);
-            keys.add(parts[0]);
-        }
-        in.close();
-
-    }
-
-    protected List<String> listOfKeys(String food){ // IMPORTANT FUNCTION
-        food = food.toLowerCase();
-        List<String> trueKeys = new ArrayList<String>();
-
-        for (String key: keys){ // may want to pass in keys as parameter?
-            if (key.toLowerCase().contains(food)){
-                trueKeys.add(key);
-            }
-        }
-
-        return trueKeys;
     }
 
     //@OnClick(R.id.fab)
