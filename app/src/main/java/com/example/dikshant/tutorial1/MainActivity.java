@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -35,6 +37,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.image.ClarifaiImage;
+import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
     Spinner nutritionalSpinner;
     Spinner densitySpinner;
-
-    //resultsPage rPage;
 
     // my data page
     TextView dataText;
@@ -219,13 +223,43 @@ public class MainActivity extends AppCompatActivity {
         picSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
+
+
+                //startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
+                new AsyncTask<Void, Void, ClarifaiResponse<List<ClarifaiOutput<Concept>>>>() {
+                    @Override protected ClarifaiResponse<List<ClarifaiOutput<Concept>>> doInBackground(Void... params) {
+                        startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
+                        return null;
+                    }
+
+                    @Override protected void onPostExecute(ClarifaiResponse<List<ClarifaiOutput<Concept>>> response) {
+                        //setBusy(false);
+                        postSelection.setVisibility(View.VISIBLE);
+                    }
+                    //private void showErrorSnackbar(@StringRes int errorString) {
+                    //    Snackbar.make(
+                    //            root,
+                    //            errorString,
+                    //            Snackbar.LENGTH_INDEFINITE
+                    //    ).show();
+                    //}
+                }.execute();
+
+                /*while (clarifai.hasPredictions() != true){
+                    postSelection.setVisibility(View.INVISIBLE);
+                    Log.d("predictions", "flag off");
+                }
+
+                postSelection.setVisibility(View.VISIBLE);
+                Log.d("predictions", "flag on");*/
+
             }
         }
         );
 
         postSelection = (Button) findViewById(R.id.post_image_selection);
         postSelection.setText("Proceed to Clarification");
+        postSelection.setVisibility(View.INVISIBLE);
         postSelection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
         List<Concept> potentialFoods;
 
         try {
-            potentialFoods = clarifai.returnPredictions();
+            //potentialFoods = clarifai.returnPredictions();
             Log.d("predictions", "went into try loop");
             if (clarifai.hasPredictions()){
                 Log.d("predictions", "went into if statement");
@@ -312,7 +346,6 @@ public class MainActivity extends AppCompatActivity {
                 final String selectedFood = foodSpinner.getItemAtPosition(pos).toString();
                 Log.d("Spinner", selectedFood);
                 //Log.d("results page", "trying to create rpage");
-                //final resultsPage rpage = new resultsPage();
 
                 finalResultButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -323,7 +356,6 @@ public class MainActivity extends AppCompatActivity {
 
                         Log.d("results page", "created rpage");
                         //setContentView(R.layout.final_result);
-                        //rpage.showResultsPage();
 
                         String volstring = (String) volumeManual.getText().toString();
                         Log.d("edittext",volstring);
@@ -400,7 +432,6 @@ public class MainActivity extends AppCompatActivity {
                 final String selectedNutr = nutritionalSpinner.getItemAtPosition(pos).toString();
                 Log.d("nutrSpinner", selectedNutr);
                 //Log.d("results page", "trying to create rpage");
-                //final resultsPage rpage = new resultsPage();
                 densitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
@@ -414,7 +445,6 @@ public class MainActivity extends AppCompatActivity {
 
                         results.setText(String.valueOf(nutrdensity*fooddensity*volume));
                         //Log.d("results page", "trying to create rpage");
-                        //final resultsPage rpage = new resultsPage();
 
 
                     }
@@ -502,7 +532,14 @@ public class MainActivity extends AppCompatActivity {
                     //onImagePicked(imageBytes);
                     Log.d("prediction", "attempting");
                     clarifai.onImagePicked(imageBytes);
-                    imageSelected.setImageBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length));
+                    try {
+                        Log.d("image display", "attempting to set");
+                        //imageSelected.setImageBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length));
+                    }
+                    catch (Exception e){
+                        Log.d("image display", "failed");
+                    }
+                    //
                     //List<Concept> predictions = clarifai.getPredictions(imageBytes);
                     //Log.d("predictions", predictions.get(0).toString());
                     Log.d("predictions", "predicted");
