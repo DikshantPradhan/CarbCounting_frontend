@@ -72,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
     Spinner foodSpinner;
     EditText volumeManual;
 
+    // clarification with text
+    EditText foodManual;
+
     // results page
     Button finalResultButton;
     Button return_to_main;
@@ -89,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
     // ndb page
     Button ndbSearch;
     Button ndbCategories;
+    EditText ndbSearchText;
+    TextView ndbSearchResults;
 
     //private ClarifaiClient client;
 
@@ -266,10 +271,50 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.nutritional_database_page);
 
         ndbCategories = (Button) findViewById(R.id.ndb_categories);
-        ndbSearch = (Button) findViewById(R.id.ndb_search);
+        ndbSearch = (Button) findViewById(R.id.ndb_search_button);
 
         ndbCategories.setText("Categories");
         ndbSearch.setText("Search");
+
+        ndbSearchText = (EditText) findViewById(R.id.ndb_search);
+        ndbSearchResults = (TextView) findViewById(R.id.ndb_search_results);
+        ndbSearchResults.setVisibility(View.INVISIBLE);
+
+        ndbSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String searchString = ndbSearchText.getText().toString();
+                Log.d("ndbsearch_edittext",searchString);
+
+                // get cursors
+                Cursor nutrition = nutrInfo.queryContaining(searchString);
+
+                // get maps
+                final Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);
+
+                // get keys
+                List<String> nutrKeys = nutrInfo.getKeysFromCursor(nutrition);
+                Log.d("ndbsearch_keys", "got keys");
+
+                String resultsText = "";
+
+                int i = 0;
+                while (i < 10 & i < nutrKeys.size()){
+                    resultsText = resultsText + nutrKeys.get(i) + "\n";
+                    i++;
+                }
+
+                Log.d("ndbsearch_resultstext", resultsText);
+
+                ndbSearchResults.setText(resultsText);
+                ndbSearchResults.setVisibility(View.VISIBLE);
+
+                //Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
+
+                //resultsPage(selectedFood, volume);
+            }
+        });
     }
 
     private void myDataPage() {
@@ -316,6 +361,7 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (Exception e){
             Log.d("predictions", "prediction probably failed");
+            userClarificationwithText();
         }
 
         finalResultButton = (Button) findViewById(R.id.finalResult);
@@ -367,16 +413,114 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //clarificationInstructions = (TextView) findViewById(R.id.message_2);
-        changetextbtn2 = (Button) findViewById(R.id.button_2);
-        changetextbtn2.setText("Select Potato");
+    }
 
-        changetextbtn2.setOnClickListener(new View.OnClickListener() {
+    private void userClarificationwithText() {
+
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
+
+        setContentView(R.layout.user_clarification_with_text);
+
+        volumeManual = (EditText) findViewById(R.id.volume_input_withtext);
+        volumeManual.setInputType(InputType.TYPE_CLASS_NUMBER |
+                InputType.TYPE_NUMBER_FLAG_DECIMAL |
+                InputType.TYPE_NUMBER_FLAG_SIGNED);
+
+        List<Concept> potentialFoods;
+
+        foodManual = (EditText) findViewById(R.id.selection_edittext);
+
+
+        /*try {
+            //potentialFoods = clarifai.returnPredictions();
+            Log.d("predictions", "went into try loop");
+            if (clarifai.hasPredictions()){
+                Log.d("predictions", "went into if statement");
+                if (clarifai.predictionsList() == null){
+                    Log.d("adapter", "null predictions");
+                }
+                String[] predictionArray = clarifai.predictionsArray();
+                List<String> predictionsArrayList = clarifai.predictionsList();
+                Log.d("adapter", String.valueOf(predictionArray.length));
+                //adapter.clear();
+                final ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, predictionArray);
+
+                Log.d("predictions", "created new adapter");
+            }
+        }
+        catch (Exception e){
+            Log.d("predictions", "prediction probably failed");
+        }*/
+
+        finalResultButton = (Button) findViewById(R.id.finalResult_withtext);
+        finalResultButton.setText("Show Final Result");
+        finalResultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clarificationInstructions.setText("Use the Drop-Down Menu");
+
+                //rpage.setCarbs("30");
+                //rpage.setFood(selectedFood);
+
+                Log.d("results page", "created rpage");
+                //setContentView(R.layout.final_result);
+
+                String selectedFood = foodManual.getText().toString();
+
+                String volstring = volumeManual.getText().toString();
+                Log.d("edittext",volstring);
+
+                Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
+
+                resultsPage(selectedFood, volume);
             }
         });
+
+        //foodSpinner = (Spinner) findViewById(R.id.spinner_withtext);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        /*String[] predictionArray = clarifai.predictionsArray();
+        List<String> predictionsArrayList = clarifai.predictionsList();
+        Log.d("adapter", String.valueOf(predictionArray.length));
+        //adapter.clear();
+        final ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, predictionArray);
+
+        foodSpinner.setAdapter(adapter2);
+
+        //final String selectedFood = foodSpinner.getSelectedItem().toString();
+        //Log.d("Spinner", selectedFood);
+
+        foodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                //Object item = parent.getItemAtPosition(pos);
+                final String selectedFood = foodSpinner.getItemAtPosition(pos).toString();
+                Log.d("Spinner", selectedFood);
+                //Log.d("results page", "trying to create rpage");
+
+                finalResultButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        //rpage.setCarbs("30");
+                        //rpage.setFood(selectedFood);
+
+                        Log.d("results page", "created rpage");
+                        //setContentView(R.layout.final_result);
+
+                        String volstring = (String) volumeManual.getText().toString();
+                        Log.d("edittext",volstring);
+
+                        Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
+
+                        resultsPage(selectedFood, volume);
+                    }
+                });
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.d("Spinner", "nothing selected");
+            }
+        });*/
+
     }
 
     private void resultsPage(String selectedFood, final Double volume) {

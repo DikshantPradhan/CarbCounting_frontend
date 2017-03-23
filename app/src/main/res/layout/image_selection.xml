@@ -22,4 +22,10 @@
         app:srcCompat="@android:color/background_light"
         android:id="@+id/image" />
 
+    <TextView
+        android:text="Wait"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/proceed_instr" />
+
 </LinearLayout>

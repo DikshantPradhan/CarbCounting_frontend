@@ -4,10 +4,13 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <Spinner
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner" />
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:id="@+id/selection_edittext" />
 
     <EditText
         android:layout_width="match_parent"
@@ -15,13 +18,13 @@
         android:inputType="textPersonName"
         android:text="0"
         android:ems="10"
-        android:id="@+id/volume_input" />
+        android:id="@+id/volume_input_withtext" />
 
     <Button
         android:text="Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/finalResult"
+        android:id="@+id/finalResult_withtext"
         android:elevation="0dp" />
 
 </LinearLayout>
