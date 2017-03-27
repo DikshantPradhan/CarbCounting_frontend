@@ -7,9 +7,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
+        android:text="Enter a Food to Search For"
         android:ems="10"
-        android:id="@+id/ndb_search" />
+        android:id="@+id/ndb_search"
+        android:textSize="30sp" />
 
     <Button
         android:text="Button"
@@ -27,5 +28,6 @@
         android:text="TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ndb_search_results" />
+        android:id="@+id/ndb_search_results"
+        android:textSize="30sp" />
 </LinearLayout>

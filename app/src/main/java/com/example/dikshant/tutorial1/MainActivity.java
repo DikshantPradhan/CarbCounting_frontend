@@ -167,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
 
-
         mainMessageText = (TextView) findViewById(R.id.message_1);
 
         picture = (Button) findViewById(R.id.button_1);
@@ -311,7 +310,6 @@ public class MainActivity extends AppCompatActivity {
                 ndbSearchResults.setVisibility(View.VISIBLE);
 
                 //Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
-
                 //resultsPage(selectedFood, volume);
             }
         });
