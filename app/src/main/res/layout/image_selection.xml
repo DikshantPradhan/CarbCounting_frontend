@@ -10,6 +10,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/select_image" />
 
+    <TextView
+        android:text="(Wait 10 Seconds Before Proceeding)"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/proceed_instr"
+        android:textSize="18sp" />
+
     <Button
         android:text="Button"
         android:layout_width="match_parent"
@@ -21,11 +28,5 @@
         android:layout_height="wrap_content"
         app:srcCompat="@android:color/background_light"
         android:id="@+id/image" />
-
-    <TextView
-        android:text="Wait"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/proceed_instr" />
 
 </LinearLayout>

@@ -4,10 +4,35 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
+    <TextView
+        android:text="Specify Results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:textSize="30sp"
+        android:gravity="center" />
+
+    <TextView
+        android:text="Select Food from Options Determined from Image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView4"
+        android:gravity="center_horizontal"
+        android:textSize="20sp" />
+
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner" />
+        android:id="@+id/spinner"
+        android:scrollbarSize="20dp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/volumeInstruction"
+        android:gravity="center_horizontal"
+        android:textSize="20sp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -15,13 +40,15 @@
         android:inputType="textPersonName"
         android:text="0"
         android:ems="10"
-        android:id="@+id/volume_input" />
+        android:id="@+id/volume_input"
+        android:textSize="30sp" />
 
     <Button
         android:text="Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/finalResult"
-        android:elevation="0dp" />
+        android:elevation="0dp"
+        android:layout_gravity="bottom|center_horizontal" />
 
 </LinearLayout>

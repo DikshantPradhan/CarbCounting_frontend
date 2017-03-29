@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     Button changetextbtn2;
     Spinner foodSpinner;
     EditText volumeManual;
+    TextView volInstr;
 
     // clarification with text
     EditText foodManual;
@@ -339,6 +340,8 @@ public class MainActivity extends AppCompatActivity {
                 InputType.TYPE_NUMBER_FLAG_SIGNED);
 
         List<Concept> potentialFoods;
+        volInstr = (TextView) findViewById(R.id.volumeInstruction);
+        volInstr.setText("Input Volume of Food in mL");
 
         try {
             //potentialFoods = clarifai.returnPredictions();
@@ -410,7 +413,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Spinner", "nothing selected");
             }
         });
-
     }
 
     private void userClarificationwithText() {
@@ -595,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
                         if (selectedDens != densSelect){
                             Double fooddensity = densityMap.get(selectedDens);
                             results.setVisibility(View.VISIBLE);
-                            results.setText(String.valueOf(nutrdensity*fooddensity*volume));
+                            results.setText(String.valueOf(nutrdensity*fooddensity*volume) + " grams of Carb");
                         }
 
                         //Log.d("results page", "trying to create rpage");
