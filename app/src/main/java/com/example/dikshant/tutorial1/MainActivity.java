@@ -274,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
         ndbSearch = (Button) findViewById(R.id.ndb_search_button);
 
         ndbCategories.setText("Categories");
+        ndbCategories.setVisibility(View.INVISIBLE);
         ndbSearch.setText("Search");
 
         ndbSearchText = (EditText) findViewById(R.id.ndb_search);
@@ -298,10 +299,12 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("ndbsearch_keys", "got keys");
 
                 String resultsText = "";
+                String resultsTextValues = "";
 
                 int i = 0;
                 while (i < 10 & i < nutrKeys.size()){
-                    resultsText = resultsText + nutrKeys.get(i) + "\n";
+                    resultsText = resultsText + nutrKeys.get(i) + ": " + nutrMap.get(nutrKeys.get(i)) + " gram/gram" + "\n";
+                    resultsTextValues = resultsTextValues + nutrMap.get(nutrKeys.get(i)) + "\n";
                     i++;
                 }
 

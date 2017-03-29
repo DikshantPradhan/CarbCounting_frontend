@@ -29,5 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ndb_search_results"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        android:verticalScrollbarPosition="right"
+        android:scrollbars="vertical"
+        android:maxLines="5" />
 </LinearLayout>
