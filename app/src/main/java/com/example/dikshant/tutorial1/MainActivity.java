@@ -15,6 +15,7 @@ import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -280,12 +281,12 @@ public class MainActivity extends AppCompatActivity {
     private void nutritionalDatabasePage() {
         setContentView(R.layout.nutritional_database_page);
 
-        ndbCategories = (Button) findViewById(R.id.ndb_categories);
+        //ndbCategories = (Button) findViewById(R.id.ndb_categories);
         ndbSearch = (Button) findViewById(R.id.ndb_search_button);
+        Button ndbSearch2 = (Button) findViewById(R.id.ndb_search2);
 
-        ndbCategories.setText("Categories");
-        ndbCategories.setVisibility(View.INVISIBLE);
-        ndbSearch.setText("Search");
+        //ndbCategories.setVisibility(View.INVISIBLE);
+        ndbSearch.setText("Search Carb Database");
 
         ndbSearchText = (EditText) findViewById(R.id.ndb_search);
         ndbSearchResults = (TextView) findViewById(R.id.ndb_search_results);
@@ -316,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
                 int i = 0;
                 while (i < 10 & i < nutrKeys.size()){
                     resultsText = resultsText + nutrKeys.get(i) + ": " + nutrMap.get(nutrKeys.get(i)) + " gram/gram" + "\n";
-                    resultsTextValues = resultsTextValues + nutrMap.get(nutrKeys.get(i)) + "\n";
+                    resultsTextValues = resultsTextValues + nutrMap.get(nutrKeys.get(i)) + "\n" + "\n";
                     i++;
                 }
 
@@ -324,6 +325,45 @@ public class MainActivity extends AppCompatActivity {
 
                 ndbSearchResults.setText(resultsText);
                 ndbSearchResults.setVisibility(View.VISIBLE);
+                ndbSearchResults.setMovementMethod(new ScrollingMovementMethod());
+
+                //Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
+                //resultsPage(selectedFood, volume);
+            }
+        });
+
+        ndbSearch2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String searchString = ndbSearchText.getText().toString();
+                Log.d("ndbsearch_edittext",searchString);
+
+                // get cursors
+                Cursor nutrition = densityInfo.queryContaining(searchString);
+
+                // get maps
+                final Map<String, Double> densMap = densityInfo.getMapFromCursor(nutrition);
+
+                // get keys
+                List<String> densKeys = densityInfo.getKeysFromCursor(nutrition);
+                Log.d("ndbsearch_keys", "got keys");
+
+                String resultsText = "";
+                String resultsTextValues = "";
+
+                int i = 0;
+                while (i < 10 & i < densKeys.size()){
+                    resultsText = resultsText + densKeys.get(i) + ": " + densMap.get(densKeys.get(i)) + " gram/gram" + "\n";
+                    resultsTextValues = resultsTextValues + densMap.get(densKeys.get(i)) + "\n" + "\n";
+                    i++;
+                }
+
+                Log.d("ndbsearch_resultstext", resultsText);
+
+                ndbSearchResults.setText(resultsText);
+                ndbSearchResults.setVisibility(View.VISIBLE);
+                ndbSearchResults.setMovementMethod(new ScrollingMovementMethod());
 
                 //Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
                 //resultsPage(selectedFood, volume);
