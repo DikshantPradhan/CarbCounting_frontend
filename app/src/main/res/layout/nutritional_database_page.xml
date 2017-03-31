@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
     <EditText
         android:layout_width="match_parent"
@@ -32,5 +33,12 @@
         android:textSize="30sp"
         android:verticalScrollbarPosition="right"
         android:scrollbars="vertical"
-        android:maxLines="5" />
+        android:maxLines="5"
+        android:layout_weight="0.96" />
+
+    <Button
+        android:text="Return to Main Screen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ndb_return_button" />
 </LinearLayout>

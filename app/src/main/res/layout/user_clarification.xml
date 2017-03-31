@@ -43,6 +43,13 @@
         android:id="@+id/volume_input"
         android:textSize="30sp" />
 
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView5"
+        android:layout_weight="0.99" />
+
     <Button
         android:text="Button"
         android:layout_width="match_parent"

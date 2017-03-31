@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     Button ndbCategories;
     EditText ndbSearchText;
     TextView ndbSearchResults;
+    Button ndbreturn_to_main;
 
     //private ClarifaiClient client;
 
@@ -265,6 +266,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         );
+
+        Button selectionWithText = (Button) findViewById(R.id.userclar_text);
+        selectionWithText.setOnClickListener(new View.OnClickListener() {
+                                                               @Override
+                                                               public void onClick(View v) {
+                                                                   userClarificationwithText();
+                                                               }
+                                                           }
+        );
     }
 
     private void nutritionalDatabasePage() {
@@ -280,6 +290,8 @@ public class MainActivity extends AppCompatActivity {
         ndbSearchText = (EditText) findViewById(R.id.ndb_search);
         ndbSearchResults = (TextView) findViewById(R.id.ndb_search_results);
         ndbSearchResults.setVisibility(View.INVISIBLE);
+
+        ndbreturn_to_main = returnToMainButton(R.id.ndb_return_button);
 
         ndbSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -329,6 +341,8 @@ public class MainActivity extends AppCompatActivity {
         monthly.setText("Monthly Data");
         weekly.setText("Weekly Data");
         daily.setText("Daily Data");
+
+        Button mydata_return_to_main = returnToMainButton(R.id.mydata_return_button);
     }
 
     private void userClarification() {
@@ -625,19 +639,20 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("Flow", "Final Results Page");
 
-        returnToMainButton();
+        return_to_main = returnToMainButton(R.id.return_to_start_button);
     }
 
-    public void returnToMainButton() {
-        return_to_main = (Button) findViewById(R.id.return_to_start_button);
-        return_to_main.setText("Return to Start Page");
-        return_to_main.setOnClickListener(new View.OnClickListener() {
+    public Button returnToMainButton(int identity) {
+        Button returning = (Button) findViewById(identity);
+        returning.setText("Return to Start Page");
+        returning.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setContentView(R.layout.activity_main);
                 introScreen();
             }
         });
+        return returning;
     }
 
     //@OnClick(R.id.fab)
