@@ -31,6 +31,18 @@
         android:layout_weight="0.99" />
 
     <Button
+        android:text="Add to Meal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/results_add" />
+
+    <Button
+        android:text="Complete Meal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/results_complete" />
+
+    <Button
         android:text="Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

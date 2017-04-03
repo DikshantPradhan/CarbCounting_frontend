@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     clarifaiHandler clarifai;
     nutritionalDB nutrInfo;
     densityDB densityInfo;
+    nutrMeal meal;
 
     // main page
     TextView mainMessageText;
@@ -122,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createDatabases() {
+        meal = new nutrMeal();
 
         userInfo = new userDB(getBaseContext());
         //Log.d("DB", String.valueOf(userInfo.getCount()));
@@ -580,11 +582,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void resultsPage(String selectedFood, final Double volume) {
+    private void resultsPage(final String selectedFood, final Double volume) {
         setContentView(R.layout.final_result);
         results = (TextView) findViewById(R.id.results_text);
         results.setVisibility(View.INVISIBLE);
         //results.setText(selectedFood);
+
+        final Button resultsAdd = (Button) findViewById(R.id.results_add);
+        final Button resultsComplete = (Button) findViewById(R.id.results_complete);
+
+        resultsAdd.setVisibility(View.INVISIBLE);
+        resultsComplete.setVisibility(View.INVISIBLE);
 
         // set spinner
         nutritionalSpinner = (Spinner) findViewById(R.id.nutrSpinner);
@@ -653,8 +661,33 @@ public class MainActivity extends AppCompatActivity {
 
                         if (selectedDens != densSelect){
                             Double fooddensity = densityMap.get(selectedDens);
+
                             results.setVisibility(View.VISIBLE);
                             results.setText(String.valueOf(nutrdensity*fooddensity*volume) + " grams of Carb");
+                            //meal.addMeal(selectedFood, carbFactor, volume);
+
+                            final Double carbFactor = nutrdensity*fooddensity;
+
+                            resultsAdd.setVisibility(View.VISIBLE);
+                            resultsComplete.setVisibility(View.VISIBLE);
+
+                            resultsAdd.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //setContentView(R.layout.activity_main);
+                                    meal.addMeal(selectedFood, carbFactor, volume);
+                                    imageSelection();
+                                }
+                            });
+                            resultsComplete.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //setContentView(R.layout.activity_main);
+                                    meal.addMeal(selectedFood, carbFactor, volume);
+                                    setContentView(R.layout.activity_main);
+                                    introScreen();
+                                }
+                            });
                         }
 
                         //Log.d("results page", "trying to create rpage");
