@@ -28,6 +28,8 @@ import android.widget.TextView;
 
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -387,7 +389,15 @@ public class MainActivity extends AppCompatActivity {
         daily.setText("Daily Data");
 
         Button mydata_return_to_main = returnToMainButton(R.id.mydata_return_button);
-        GraphView my_dataGraph = (GraphView) findViewById(R.id.graph);
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 2),
+                new DataPoint(4, 6)
+        });
+        graph.addSeries(series);
     }
 
     private void userClarification() {
