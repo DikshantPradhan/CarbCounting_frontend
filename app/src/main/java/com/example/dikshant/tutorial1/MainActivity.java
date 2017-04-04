@@ -27,6 +27,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 
+import com.jjoe64.graphview.GraphView;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -385,6 +387,7 @@ public class MainActivity extends AppCompatActivity {
         daily.setText("Daily Data");
 
         Button mydata_return_to_main = returnToMainButton(R.id.mydata_return_button);
+        GraphView my_dataGraph = (GraphView) findViewById(R.id.graph);
     }
 
     private void userClarification() {
