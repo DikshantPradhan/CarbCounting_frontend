@@ -20,6 +20,7 @@ public abstract class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_DATE = "date";
     private static final String KEY_FOOD = "food";
     private static final String KEY_CARBS = "carbs";
+    private static final String KEY_MEAL = "meal";
     // table name
     private static final String TABLE_NAME_2 = "nutritionInfo";
     private static final String TABLE_NAME_3 = "densityInfo";
@@ -49,7 +50,7 @@ public abstract class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("DB", "oncreating");
-        String CREATE_TABLE =  "CREATE TABLE " + TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DATE + " TEXT," + KEY_FOOD + " TEXT," + KEY_CARBS + " TEXT" + ")";
+        String CREATE_TABLE =  "CREATE TABLE " + TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DATE + " TEXT," + KEY_FOOD + " TEXT," + KEY_CARBS + " TEXT" + KEY_MEAL + " TEXT" + ")";
 
         Log.d("DB", "creating ndb");
         String CREATE_TABLE_2 =  "CREATE TABLE " + TABLE_NAME_2 + "(" + DESC + " TEXT," + CARB + " TEXT,"
