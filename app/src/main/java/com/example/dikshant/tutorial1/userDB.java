@@ -19,6 +19,7 @@ public class userDB extends DBHandler {
     private static final String KEY_DATE = "date";
     private static final String KEY_FOOD = "food";
     private static final String KEY_CARBS = "carbs";
+    private static final String KEY_MEAL = "meal";
 
     public userDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -39,6 +40,27 @@ public class userDB extends DBHandler {
         values.put(KEY_DATE, date);
         values.put(KEY_FOOD, food);
         values.put(KEY_CARBS, carbs);
+
+        // db insertion
+        db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+    }
+
+    public void addEntry(String food, String carbs, String date, String meal){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Log.d("DB", "found writable");
+
+        //Calendar cal = Calendar.getInstance();
+        //int date = cal.DATE;
+        //String date = "2";
+
+        // value creation
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_DATE, date);
+        values.put(KEY_FOOD, food);
+        values.put(KEY_CARBS, carbs);
+        values.put(KEY_MEAL, meal);
 
         // db insertion
         db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
