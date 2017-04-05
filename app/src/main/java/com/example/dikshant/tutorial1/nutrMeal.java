@@ -34,4 +34,16 @@ public class nutrMeal {
         carbFactors.add(carbFactor);
         volumes.add(volume);
     }
+
+    public List<String> getFoods(){
+        return foods;
+    }
+
+    public List<Double> getCarbFactors(){
+        return carbFactors;
+    }
+
+    public List<Double> getVolumes(){
+        return volumes;
+    }
 }

@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.List;
+
 /**
  * Created by Dikshant on 2/5/2017.
  */
@@ -64,6 +66,41 @@ public class userDB extends DBHandler {
 
         // db insertion
         db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+    }
+
+    public void addEntry(nutrMeal meal, String date){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Log.d("DB", "found writable");
+
+        //Calendar cal = Calendar.getInstance();
+        //int date = cal.DATE;
+        //String date = "2";
+
+        // value creation
+        ContentValues values = new ContentValues();
+
+        //values.put(KEY_DATE, date);
+        //values.put(KEY_FOOD, food);
+        //values.put(KEY_CARBS, carbs);
+        //values.put(KEY_MEAL, meal);
+        List<String> foods = meal.getFoods();
+        List<Double> carbFactors = meal.getCarbFactors();
+        List<Double> volumes = meal.getVolumes();
+
+        int length = foods.size();
+
+        for (int i = 0; i < length; i++){
+            values.put(KEY_DATE, date);
+            values.put(KEY_FOOD, foods.get(i));
+            values.put(KEY_CARBS, carbFactors.get(i)*volumes.get(i));
+
+            // db insertion
+            db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        }
+
+        // db insertion
+        //db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
     }
 
