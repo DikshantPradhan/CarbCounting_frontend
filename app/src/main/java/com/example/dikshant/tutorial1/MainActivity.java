@@ -613,8 +613,8 @@ public class MainActivity extends AppCompatActivity {
         densitySpinner.setVisibility(View.INVISIBLE);
 
         // get cursors
-        Cursor nutrition = nutrInfo.queryContaining(selectedFood);
-        Cursor density = densityInfo.queryContaining(selectedFood);
+        Cursor nutrition = nutrInfo.queryContainingRaw(selectedFood);
+        Cursor density = densityInfo.queryContainingRaw(selectedFood);
 
         // get maps
         final Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);

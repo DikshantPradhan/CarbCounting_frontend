@@ -202,6 +202,31 @@ public class nutritionalDB extends DBHandler {
         return cursor;
     }
 
+    public Cursor queryContainingRaw(String word){
+
+        Log.d("nDB", "querying raw");
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        //Cursor cursor = db.query(TABLE_NAME, new String[] {DESC, CARB, CHOL},
+          //      DESC + " LIKE ?", new String[] {"%" + word + "%"},
+            //    null, null, null);
+
+        String queryString = "Select * from " + TABLE_NAME + " where " + DESC + " like ? and " + DESC + " like ?";
+
+        Cursor cursor = db.rawQuery(queryString, new String[] {"%" + word + "%", "%RAW%"});
+
+        //cursor = db.query(TABLE_NAME, new String[] {DESC, CARB, CHOL},
+          //      "(" + KEY_BODY + " like '%" + inputText + "%' OR " + KEY_TITLE + " like '%" + inputText + "%') AND (" + KEY_COLOR + " like '%" + colorvalue + "%')" , null,
+            //    null, null, KEY_TIME + " DESC", null);
+
+        Log.d("nDB", String.valueOf(cursor.getCount()));
+
+        //Log.d("nDB query", cursor.getString(cursor.getColumnIndex(DESC)));
+
+        return cursor;
+    }
+
     public Map<String, Double> getMapFromCursor(Cursor cursor){
         Map<String, Double> results = new HashMap<String, Double>();
 
