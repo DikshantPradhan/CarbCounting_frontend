@@ -7,6 +7,10 @@ package com.example.dikshant.tutorial1;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ViewSwitcher;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -32,7 +36,10 @@ import clarifai2.dto.model.ConceptModel;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 
-public class clarifaiHandler {
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+public class clarifaiHandler extends MainActivity {
 
     @Nullable
     private ClarifaiClient client;
@@ -91,11 +98,21 @@ public class clarifaiHandler {
     }
 
     public void onImagePicked(@NonNull final byte[] imageBytes) {
+        Log.d("image picked", "running predictor");
         // Now we will upload our image to the Clarifai API
-        //setBusy(true);
 
         // Make sure we don't show a list of old concepts while the image is being uploaded
         //adapter.setData(Collections.<Concept>emptyList());
+
+        /*ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = foodModel.predict()
+                .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(imageBytes)))
+                .executeSync();
+
+        List<ClarifaiOutput<Concept>> predictions = response.get();
+
+        predictionsFlag = true;
+        Log.d("predictions", "set flag");
+        predictionsList = predictions.get(0).data();*/
 
         new AsyncTask<Void, Void, ClarifaiResponse<List<ClarifaiOutput<Concept>>>>() {
             @Override protected ClarifaiResponse<List<ClarifaiOutput<Concept>>> doInBackground(Void... params) {
@@ -119,11 +136,13 @@ public class clarifaiHandler {
                 final List<ClarifaiOutput<Concept>> predictions = response.get();
                 if (predictions.isEmpty()) {
                     //showErrorSnackbar(R.string.no_results_from_api);
+                    Log.d("predictions", "none");
                     return;
                 }
                 predictionsFlag = true;
                 Log.d("predictions", "set flag");
                 predictionsList = predictions.get(0).data();
+
             }
             //private void showErrorSnackbar(@StringRes int errorString) {
             //    Snackbar.make(
@@ -173,4 +192,14 @@ public class clarifaiHandler {
     public boolean hasPredictions(){
         return predictionsFlag;
     }
+
+    /*private void setBusy(final boolean busy) {
+        runOnUiThread(new Runnable() {
+            @Override public void run() {
+                switcher.setDisplayedChild(busy ? 1 : 0);
+                imageView.setVisibility(busy ? GONE : VISIBLE);
+                fab.setEnabled(!busy);
+            }
+        });
+    }*/
 }

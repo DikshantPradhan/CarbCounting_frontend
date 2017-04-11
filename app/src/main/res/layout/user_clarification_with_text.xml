@@ -8,35 +8,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Enter a Food to Search For"
+        android:text="Name"
         android:ems="10"
-        android:id="@+id/ndb_search"
-        android:textSize="30sp" />
+        android:id="@+id/selection_edittext" />
 
-    <Button
-        android:text="Search Carb Database"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ndb_search_button" />
-
-    <Button
-        android:text="Search Volume Database"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ndb_search2" />
+        android:inputType="textPersonName"
+        android:text="0"
+        android:ems="10"
+        android:id="@+id/volume_input_withtext" />
 
     <TextView
         android:text="TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ndb_search_results"
-        android:textSize="24sp"
-        android:scrollbars="vertical"
-        android:layout_weight="0.96" />
+        android:id="@+id/textView7"
+        android:layout_weight="0.97" />
 
     <Button
-        android:text="Return to Main Screen"
+        android:text="Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ndb_return_button" />
+        android:id="@+id/finalResult_withtext"
+        android:elevation="0dp" />
+
 </LinearLayout>
