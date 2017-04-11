@@ -50,7 +50,9 @@ public abstract class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("DB", "oncreating");
-        String CREATE_TABLE =  "CREATE TABLE " + TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DATE + " TEXT," + KEY_FOOD + " TEXT," + KEY_CARBS + " TEXT" + KEY_MEAL + " TEXT" + ")";
+        String CREATE_TABLE =  "CREATE TABLE " + TABLE_NAME + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_DATE + " TEXT," + KEY_FOOD + " TEXT," + KEY_CARBS + " TEXT," + KEY_MEAL + " TEXT" + ")";
+
+        Log.d("DB", CREATE_TABLE);
 
         Log.d("DB", "creating ndb");
         String CREATE_TABLE_2 =  "CREATE TABLE " + TABLE_NAME_2 + "(" + DESC + " TEXT," + CARB + " TEXT,"

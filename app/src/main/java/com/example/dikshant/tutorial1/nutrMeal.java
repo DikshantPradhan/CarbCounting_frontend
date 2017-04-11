@@ -12,11 +12,13 @@ public class nutrMeal {
     private List<String> foods;
     private List<Double> carbFactors;
     private List<Double> volumes;
+    private String name;
 
     public nutrMeal(){
         foods = new ArrayList<String>();
         carbFactors = new ArrayList<Double>();
         volumes = new ArrayList<Double>();
+        name = "NA";
     }
 
     public nutrMeal(String food, double carbFactor, double volume){
@@ -35,6 +37,10 @@ public class nutrMeal {
         volumes.add(volume);
     }
 
+    public void setName(String name_entry){
+        name = name_entry;
+    }
+
     public List<String> getFoods(){
         return foods;
     }
@@ -45,5 +51,15 @@ public class nutrMeal {
 
     public List<Double> getVolumes(){
         return volumes;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public void clear(){
+        foods = new ArrayList<String>();
+        carbFactors = new ArrayList<Double>();
+        volumes = new ArrayList<Double>();
     }
 }

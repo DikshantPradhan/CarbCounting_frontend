@@ -5,8 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.util.List;
 
 /**
@@ -87,6 +91,7 @@ public class userDB extends DBHandler {
         List<String> foods = meal.getFoods();
         List<Double> carbFactors = meal.getCarbFactors();
         List<Double> volumes = meal.getVolumes();
+        String name = meal.getName();
 
         int length = foods.size();
 
@@ -94,6 +99,7 @@ public class userDB extends DBHandler {
             values.put(KEY_DATE, date);
             values.put(KEY_FOOD, foods.get(i));
             values.put(KEY_CARBS, carbFactors.get(i)*volumes.get(i));
+            values.put(KEY_MEAL, name);
 
             // db insertion
             db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -169,6 +175,167 @@ public class userDB extends DBHandler {
         //Log.d("nDB query", cursor.getString(cursor.getColumnIndex(DESC)));
 
         return cursor;
+    }
+
+    public Cursor queryAll(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        //Cursor cs = db.query(USER_TABLE, new String[]{})
+        String fullQuery = "SELECT * FROM "  + TABLE_NAME;
+        Cursor cursor = db.rawQuery(fullQuery, null);
+        return cursor;
+    }
+
+    public void exportCSV(Context context){
+        Log.d("file output", "start2");
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String fullQuery = "SELECT * FROM "  + TABLE_NAME;
+        Cursor cursor = db.rawQuery(fullQuery, null);
+
+        writeFileOnInternalStorage(context, "databasetext.txt", "test");
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            Log.d("file output", "entered for loop");
+            String food = cursor.getString(cursor.getColumnIndex(KEY_FOOD));
+            String carbs = cursor.getString(cursor.getColumnIndex(KEY_CARBS));
+            String date = cursor.getString(cursor.getColumnIndex(KEY_DATE));
+            String meal = cursor.getString(cursor.getColumnIndex(KEY_MEAL));
+
+            String line = date + "," + meal + "," + food + "," + carbs + "\n";
+            Log.d("write test", line);
+            writeFileOnInternalStorage(context, "databasetext.txt", line);
+
+            //results.put(desc, carb);
+            //Log.d("nutrition map", String.valueOf(desc));
+        }
+
+        Log.d("file export", "end task");
+
+
+    }
+
+    public void exportCSV2(Context context){
+        Log.d("file output", "start");
+        //File dbFile= getDatabasePath("MyDBName.db");
+        //DBHelper dbhelper = new DBHelper(getApplicationContext());
+        //File exportDir = new File(context.getFilesDir(), "databasetest");
+        File exportDir = new File(Environment.getExternalStorageDirectory(), "databasetest");
+        //File exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        //Log.d("file loc", context.getFilesDir().getAbsolutePath()+"/text.txt");
+        if (!exportDir.exists())
+        {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "csvname.csv");
+        try
+        {
+            file.createNewFile();
+            Log.d("file output", "created new file");
+            //CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            //Cursor cs = db.query(USER_TABLE, new String[]{})
+            String fullQuery = "SELECT * FROM "  + TABLE_NAME;
+            Cursor cursor = db.rawQuery(fullQuery, null);
+            //csvWrite.writeNext(curCSV.getColumnNames());
+
+            FileOutputStream stream = new FileOutputStream(file);
+            Log.d("file output", "created stream");
+            stream.write("test".getBytes());
+
+            try{
+                Log.d("file output", "entered try loop, size: " + getCount());
+                for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                    Log.d("file output", "entered for loop");
+                    String food = cursor.getString(cursor.getColumnIndex(KEY_FOOD));
+                    String carbs = cursor.getString(cursor.getColumnIndex(KEY_CARBS));
+                    String date = cursor.getString(cursor.getColumnIndex(KEY_DATE));
+                    String meal = cursor.getString(cursor.getColumnIndex(KEY_MEAL));
+
+                    String line = date + "," + meal + "," + food + "," + carbs + "\n";
+                    Log.d("write test", line);
+
+                    stream.write(line.getBytes());
+
+
+
+                    //results.put(desc, carb);
+                    //Log.d("nutrition map", String.valueOf(desc));
+                }
+            }
+            catch (Exception e){
+                Log.e("usedb failure", "db export", e);
+            }
+
+            Log.d("file output", "file written");
+
+            stream.close();
+
+            /*
+
+            while(curCSV.moveToNext())
+            {
+                //Which column you want to exprort
+                String arrStr[] ={curCSV.getString(0),curCSV.getString(1), curCSV.getString(2)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+            */
+        }
+        catch(Exception sqlEx)
+        {
+            Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
+        }
+
+        Log.d("file export", "end task");
+    }
+
+    public void writeFileOnInternalStorage(Context mcoContext,String sFileName, String sBody){
+        File file = new File(mcoContext.getFilesDir(),"mydir");
+
+        Log.d("file output", "new file");
+
+        if(!file.exists()){
+            file.mkdir();
+            Log.d("file output", "made dir");
+        }
+
+
+        try{
+            Log.d("file output", "trying");
+            File gpxfile = new File(file, sFileName);
+            FileWriter writer = new FileWriter(gpxfile);
+            writer.append(sBody);
+            writer.flush();
+            writer.close();
+
+        }catch (Exception e){
+
+        }
+    }
+
+    public String getTableAsString() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String tableName = TABLE_NAME;
+        Log.d("table to string", "getTableAsString called");
+        String tableString = String.format("Table %s:\n", tableName);
+        Cursor allRows  = db.rawQuery("SELECT * FROM " + tableName, null);
+        if (allRows.moveToFirst() ){
+            String[] columnNames = allRows.getColumnNames();
+            do {
+                for (String name: columnNames) {
+                    tableString += String.format("%s: %s\n", name,
+                            allRows.getString(allRows.getColumnIndex(name)));
+                }
+                tableString += "\n";
+
+            } while (allRows.moveToNext());
+        }
+
+        return tableString;
     }
 
     // need reading functions and export and others???

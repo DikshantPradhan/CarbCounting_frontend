@@ -37,8 +37,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         support.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                // to be implemented
+                test();
             }
         });
     }
@@ -379,6 +382,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void myDataPage() {
         setContentView(R.layout.my_data_page);
+
+        Log.d("db size", String.valueOf(userInfo.getCount()));
+        Log.d("db content", userInfo.getTableAsString());
+        //userInfo.exportCSV(MainActivity.this.getApplicationContext());
 
         monthly = (Button) findViewById(R.id.data_monthly);
         weekly = (Button) findViewById(R.id.data_weekly);
@@ -697,14 +704,19 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(View v) {
                                     //setContentView(R.layout.activity_main);
                                     meal.addMeal(selectedFood, carbFactor, volume);
-                                    setContentView(R.layout.activity_main);
-                                    introScreen();
+                                    Log.d("completing meal", "stepping into function");
+                                    mealComplete();
+                                    //userInfo.addEntry(meal, getDate());
+                                    //meal.clear();
+                                    //setContentView(R.layout.activity_main);
+                                    //userInfo.exportCSV2(MainActivity.this.getApplicationContext());
+                                    //introScreen();
+
                                 }
                             });
                         }
 
                         //Log.d("results page", "trying to create rpage");
-
 
                     }
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -726,6 +738,34 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Flow", "Final Results Page");
 
         return_to_main = returnToMainButton(R.id.return_to_start_button);
+    }
+
+    private void mealComplete(){
+        setContentView(R.layout.complete_meal);
+        Log.d("meal complete", "entering completion");
+
+        //final nutrMeal meal = meal_input;
+
+        final EditText mealEntry = (EditText) findViewById(R.id.name_of_meal);
+
+        TextView space = (TextView) findViewById(R.id.completeMeal_emptytext);
+        space.setVisibility(View.INVISIBLE);
+
+        Button complete = (Button) findViewById(R.id.entermeal_name);
+        complete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //setContentView(R.layout.activity_main);
+                String mealName = mealEntry.getText().toString();
+                meal.setName(mealName);
+                userInfo.addEntry(meal, getDate());
+                meal.clear();
+                setContentView(R.layout.activity_main);
+                //userInfo.exportCSV2(MainActivity.this.getApplicationContext());
+                Log.d("meal complete", "returning to intro");
+                introScreen();
+            }
+        });
     }
 
     public Button returnToMainButton(int identity) {
@@ -796,5 +836,25 @@ public class MainActivity extends AppCompatActivity {
                 bitmap.recycle();
             }
         }
+    }
+
+    public String getDate(){
+        Calendar cal = Calendar.getInstance();
+        String date = String.valueOf(cal.DATE) + "_" + String.valueOf(cal.HOUR_OF_DAY)
+                + "_" + String.valueOf(cal.MINUTE) + "_" + String.valueOf(cal.SECOND);
+
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => " + c.getTime());
+
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String formattedDate = df.format(c.getTime());
+
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+
+        return currentDateTimeString;
+    }
+
+    public void test(){
+        userInfo.exportCSV2(MainActivity.this.getApplicationContext());
     }
 }
