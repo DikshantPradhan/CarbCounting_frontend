@@ -389,7 +389,7 @@ public class userDB extends DBHandler {
             Log.d("date parse", date.toString());
             //System.out.println(date);
         } catch (ParseException e) {
-            
+
             e.printStackTrace();
         }
 
