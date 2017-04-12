@@ -11,6 +11,10 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,17 +81,9 @@ public class userDB extends DBHandler {
         SQLiteDatabase db = this.getWritableDatabase();
         Log.d("DB", "found writable");
 
-        //Calendar cal = Calendar.getInstance();
-        //int date = cal.DATE;
-        //String date = "2";
-
         // value creation
         ContentValues values = new ContentValues();
 
-        //values.put(KEY_DATE, date);
-        //values.put(KEY_FOOD, food);
-        //values.put(KEY_CARBS, carbs);
-        //values.put(KEY_MEAL, meal);
         List<String> foods = meal.getFoods();
         List<Double> carbFactors = meal.getCarbFactors();
         List<Double> volumes = meal.getVolumes();
@@ -105,8 +101,6 @@ public class userDB extends DBHandler {
             db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         }
 
-        // db insertion
-        //db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
     }
 
@@ -114,13 +108,10 @@ public class userDB extends DBHandler {
     public int getCount(){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        //Cursor cs = db.query(USER_TABLE, new String[]{})
         String countQuery = "SELECT * FROM "  + TABLE_NAME;
         Cursor cursor = db.rawQuery(countQuery, null);
 
         return cursor.getCount();
-
-        //return 0;
     }
 
     @Override
@@ -140,8 +131,6 @@ public class userDB extends DBHandler {
 
         Log.d("nDB", String.valueOf(cursor.getCount()));
 
-        //Log.d("nDB query", cursor.getString(cursor.getColumnIndex(DESC)));
-
         return cursor;
     }
 
@@ -155,8 +144,6 @@ public class userDB extends DBHandler {
                 null, null, null);
 
         Log.d("nDB", String.valueOf(cursor.getCount()));
-
-        //Log.d("nDB query", cursor.getString(cursor.getColumnIndex(DESC)));
 
         return cursor;
     }
@@ -172,15 +159,74 @@ public class userDB extends DBHandler {
 
         Log.d("nDB", String.valueOf(cursor.getCount()));
 
-        //Log.d("nDB query", cursor.getString(cursor.getColumnIndex(DESC)));
-
         return cursor;
+    }
+
+    public Cursor queryDateSum(){
+        // SELECT NAME, SUM(SALARY) FROM COMPANY GROUP BY NAME ORDER BY NAME
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT " + KEY_DATE + ", SUM(" + KEY_CARBS + ") FROM " + TABLE_NAME + " GROUP BY " + KEY_DATE + " ORDER BY ?";
+
+        Cursor cursor = db.rawQuery(query, new String[] {KEY_CARBS});
+
+        Log.d("datesum cursor", String.valueOf(cursor.getCount()));
+
+        return  cursor;
+    }
+
+    public List<Date> getDatesforGraph(Cursor datesumCursor){
+        List<Date> dates = new ArrayList<Date>();
+
+        for (datesumCursor.moveToFirst(); !datesumCursor.isAfterLast(); datesumCursor.moveToNext()) {
+            String date = datesumCursor.getString(datesumCursor.getColumnIndex(KEY_DATE));
+
+            dates.add(stringToDate(date));
+        }
+
+        return dates;
+    }
+
+    public List<Double> getSumsforGraph(Cursor datesumCursor){
+        List<Double> sums = new ArrayList<Double>();
+        for (datesumCursor.moveToFirst(); !datesumCursor.isAfterLast(); datesumCursor.moveToNext()) {
+            String carbs = datesumCursor.getString(datesumCursor.getColumnIndex("SUM(" + KEY_CARBS + ")"));
+            sums.add(Double.valueOf(carbs));
+        }
+        return sums;
+    }
+
+    public String printDateSumTable(Cursor cursor){
+
+        Log.d("printingdatesum", "entered function");
+
+        String table = "";
+
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            Log.d("file output", "entered for loop");
+            //String food = cursor.getString(cursor.getColumnIndex(KEY_FOOD));
+            String carbs = cursor.getString(cursor.getColumnIndex("SUM(" + KEY_CARBS + ")"));
+            String date = cursor.getString(cursor.getColumnIndex(KEY_DATE));
+
+            Log.d("testing date parse", stringToDate(date).toString());
+            //String meal = cursor.getString(cursor.getColumnIndex(KEY_MEAL));
+
+            String line = date + "_" + carbs + "\n";
+            table = table + line;
+            //Log.d("write test", line);
+
+            //stream.write(line.getBytes());
+
+            //results.put(desc, carb);
+            //Log.d("nutrition map", String.valueOf(desc));
+        }
+        return table;
     }
 
     public Cursor queryAll(){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        //Cursor cs = db.query(USER_TABLE, new String[]{})
         String fullQuery = "SELECT * FROM "  + TABLE_NAME;
         Cursor cursor = db.rawQuery(fullQuery, null);
         return cursor;
@@ -206,13 +252,9 @@ public class userDB extends DBHandler {
             Log.d("write test", line);
             writeFileOnInternalStorage(context, "databasetext.txt", line);
 
-            //results.put(desc, carb);
-            //Log.d("nutrition map", String.valueOf(desc));
         }
 
         Log.d("file export", "end task");
-
-
     }
 
     public void exportCSV2(Context context){
@@ -336,6 +378,22 @@ public class userDB extends DBHandler {
         }
 
         return tableString;
+    }
+
+    private Date stringToDate(String dateString){
+        SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
+        Date date = new Date();
+        //String pattern = date.toString();
+        try {
+            date = format.parse(dateString);
+            Log.d("date parse", date.toString());
+            //System.out.println(date);
+        } catch (ParseException e) {
+            
+            e.printStackTrace();
+        }
+
+        return date;
     }
 
     // need reading functions and export and others???

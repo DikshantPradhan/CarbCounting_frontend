@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
         userInfo = new userDB(getBaseContext());
         //Log.d("DB", String.valueOf(userInfo.getCount()));
-        userInfo.clear();
+        //userInfo.clear();
         //Log.d("DB", String.valueOf(userInfo.getCount()));
         //userInfo.getCount();
         Calendar cal = Calendar.getInstance();
@@ -170,9 +170,6 @@ public class MainActivity extends AppCompatActivity {
             // database doesn't exist yet.
         }
 
-        //Cursor potatoes = densityInfo.queryContaining("potato");
-        //Log.d("DBquery", potatoes.toString());
-
     }
 
     public void introScreen() {
@@ -188,9 +185,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
                 imageSelection();
-                //setContentView(R.layout.image_selection);
-                //mainMessageText.setText(getString(R.string.user_message));
-                //userClarification();
             }
         });
 
@@ -233,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
                 //startActivityForResult(new Intent(Intent.ACTION_PICK).setType("image/*"), PICK_IMAGE);
                 new AsyncTask<Void, Void, ClarifaiResponse<List<ClarifaiOutput<Concept>>>>() {
                     @Override protected ClarifaiResponse<List<ClarifaiOutput<Concept>>> doInBackground(Void... params) {
@@ -245,22 +238,7 @@ public class MainActivity extends AppCompatActivity {
                         //setBusy(false);
                         postSelection.setVisibility(View.VISIBLE);
                     }
-                    //private void showErrorSnackbar(@StringRes int errorString) {
-                    //    Snackbar.make(
-                    //            root,
-                    //            errorString,
-                    //            Snackbar.LENGTH_INDEFINITE
-                    //    ).show();
-                    //}
                 }.execute();
-
-                /*while (clarifai.hasPredictions() != true){
-                    postSelection.setVisibility(View.INVISIBLE);
-                    Log.d("predictions", "flag off");
-                }
-
-                postSelection.setVisibility(View.VISIBLE);
-                Log.d("predictions", "flag on");*/
 
             }
         }
@@ -397,14 +375,28 @@ public class MainActivity extends AppCompatActivity {
 
         Button mydata_return_to_main = returnToMainButton(R.id.mydata_return_button);
         GraphView graph = (GraphView) findViewById(R.id.graph);
+
+        graphviewAdapter graphy = new graphviewAdapter(graph);
+
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 1),
+                new DataPoint(1, 1),
                 new DataPoint(1, 5),
                 new DataPoint(2, 3),
                 new DataPoint(3, 2),
                 new DataPoint(4, 6)
         });
-        graph.addSeries(series);
+        //graph.addSeries(series);
+
+        Cursor datesum = userInfo.queryDateSum();
+        Log.d("datesum test", userInfo.printDateSumTable(datesum));
+        Log.d("date test", String.valueOf(userInfo.getDatesforGraph(datesum)));
+        Log.d("sum test", String.valueOf(userInfo.getSumsforGraph(datesum)));
+
+        List<Date> dates = userInfo.getDatesforGraph(datesum);
+        List<Double> sums = userInfo.getSumsforGraph(datesum);
+
+        //graphy.graph(series);
+        graphy.graphDate(dates, sums);
     }
 
     private void userClarification() {
@@ -509,28 +501,6 @@ public class MainActivity extends AppCompatActivity {
 
         foodManual = (EditText) findViewById(R.id.selection_edittext);
 
-
-        /*try {
-            //potentialFoods = clarifai.returnPredictions();
-            Log.d("predictions", "went into try loop");
-            if (clarifai.hasPredictions()){
-                Log.d("predictions", "went into if statement");
-                if (clarifai.predictionsList() == null){
-                    Log.d("adapter", "null predictions");
-                }
-                String[] predictionArray = clarifai.predictionsArray();
-                List<String> predictionsArrayList = clarifai.predictionsList();
-                Log.d("adapter", String.valueOf(predictionArray.length));
-                //adapter.clear();
-                final ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, predictionArray);
-
-                Log.d("predictions", "created new adapter");
-            }
-        }
-        catch (Exception e){
-            Log.d("predictions", "prediction probably failed");
-        }*/
-
         finalResultButton = (Button) findViewById(R.id.finalResult_withtext);
         finalResultButton.setText("Show Final Result");
         finalResultButton.setOnClickListener(new View.OnClickListener() {
@@ -554,55 +524,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //foodSpinner = (Spinner) findViewById(R.id.spinner_withtext);
-
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        /*String[] predictionArray = clarifai.predictionsArray();
-        List<String> predictionsArrayList = clarifai.predictionsList();
-        Log.d("adapter", String.valueOf(predictionArray.length));
-        //adapter.clear();
-        final ArrayAdapter<CharSequence> adapter2 = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, predictionArray);
-
-        foodSpinner.setAdapter(adapter2);
-
-        //final String selectedFood = foodSpinner.getSelectedItem().toString();
-        //Log.d("Spinner", selectedFood);
-
-        foodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                //Object item = parent.getItemAtPosition(pos);
-                final String selectedFood = foodSpinner.getItemAtPosition(pos).toString();
-                Log.d("Spinner", selectedFood);
-                //Log.d("results page", "trying to create rpage");
-
-                finalResultButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        //rpage.setCarbs("30");
-                        //rpage.setFood(selectedFood);
-
-                        Log.d("results page", "created rpage");
-                        //setContentView(R.layout.final_result);
-
-                        String volstring = (String) volumeManual.getText().toString();
-                        Log.d("edittext",volstring);
-
-                        Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
-
-                        resultsPage(selectedFood, volume);
-                    }
-                });
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-                Log.d("Spinner", "nothing selected");
-            }
-        });*/
 
     }
 
-    private void resultsPage(final String selectedFood, final Double volume) {
+    private void resultsPage2Spinners(final String selectedFood, final Double volume) {
         setContentView(R.layout.final_result);
         results = (TextView) findViewById(R.id.results_text);
         results.setVisibility(View.INVISIBLE);
@@ -740,6 +666,132 @@ public class MainActivity extends AppCompatActivity {
         return_to_main = returnToMainButton(R.id.return_to_start_button);
     }
 
+    private void resultsPage(final String selectedFood, final Double volume) {
+        setContentView(R.layout.final_result);
+        results = (TextView) findViewById(R.id.results_text);
+        results.setVisibility(View.INVISIBLE);
+        //results.setText(selectedFood);
+
+        final Button resultsAdd = (Button) findViewById(R.id.results_add);
+        final Button resultsComplete = (Button) findViewById(R.id.results_complete);
+
+        resultsAdd.setVisibility(View.INVISIBLE);
+        resultsComplete.setVisibility(View.INVISIBLE);
+
+        // set spinner
+        nutritionalSpinner = (Spinner) findViewById(R.id.nutrSpinner);
+        densitySpinner = (Spinner) findViewById(R.id.densitySpinner);
+        densitySpinner.setVisibility(View.INVISIBLE);
+
+        // get cursors
+        Cursor nutrition = nutrInfo.queryContainingRaw(selectedFood);
+        Cursor density = densityInfo.queryContainingRaw(selectedFood);
+
+        // get maps
+        final Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);
+        final Map<String, Double> densityMap = densityInfo.getMapFromCursor(density);
+
+        // get keys
+        List<String> nutrKeys = nutrInfo.getKeysFromCursor(nutrition);
+        List<String> densityKeys = densityInfo.getKeysFromCursor(density);
+
+        final String nutrSelect = "Select a food for grams Carb/grams of Food";
+        final String densSelect = "Select a food for grams of Food/volume of Food";
+        nutrKeys.add(0, nutrSelect);
+        densityKeys.add(0, densSelect);
+
+        Log.d("results size", String.valueOf(nutrKeys.size()));
+        Log.d("results size", String.valueOf(densityKeys.size()));
+
+        String[] nutrArr = new String[nutrKeys.size()];
+        nutrArr = nutrKeys.toArray(nutrArr);
+
+        String[] densArr = new String[densityKeys.size()];
+        densArr = densityKeys.toArray(densArr);
+
+        Log.d("results size", String.valueOf(nutrArr.length));
+        Log.d("results size", String.valueOf(densArr.length));
+
+        final String selectedDens = densArr[1];
+        Log.d("1st item in dens array", selectedDens);
+
+
+        // set adapters
+
+        final ArrayAdapter<CharSequence> nutrAdapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, nutrArr);
+        nutritionalSpinner.setAdapter(nutrAdapter);
+        final ArrayAdapter<CharSequence> densAdapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, densArr);
+        densitySpinner.setAdapter(densAdapter);
+
+        //final String selectedNutr;
+        nutritionalSpinner.setSelection(1);
+
+        nutritionalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                //Object item = parent.getItemAtPosition(pos);
+                final String selectedNutr = nutritionalSpinner.getItemAtPosition(pos).toString();
+                Log.d("nutrSpinner", selectedNutr);
+                if (selectedNutr != nutrSelect){
+                    //densitySpinner.setVisibility(View.VISIBLE);
+                    //densitySpinner.setSelection(0);
+                    //results.setVisibility(View.INVISIBLE);
+                    Double nutrdensity = nutrMap.get(selectedNutr);
+                    Double fooddensity = densityMap.get(selectedDens);
+
+                    results.setVisibility(View.VISIBLE);
+                    results.setText(String.valueOf(nutrdensity*fooddensity*volume) + " grams of Carb");
+                    //meal.addMeal(selectedFood, carbFactor, volume);
+
+                    final Double carbFactor = nutrdensity*fooddensity;
+
+                    resultsAdd.setVisibility(View.VISIBLE);
+                    resultsComplete.setVisibility(View.VISIBLE);
+
+                    resultsAdd.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //setContentView(R.layout.activity_main);
+                            meal.addMeal(selectedFood, carbFactor, volume);
+                            imageSelection();
+                        }
+                    });
+                    resultsComplete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //setContentView(R.layout.activity_main);
+                            meal.addMeal(selectedFood, carbFactor, volume);
+                            Log.d("completing meal", "stepping into function");
+                            mealComplete();
+                            //userInfo.addEntry(meal, getDate());
+                            //meal.clear();
+                            //setContentView(R.layout.activity_main);
+                            //userInfo.exportCSV2(MainActivity.this.getApplicationContext());
+                            //introScreen();
+
+                        }
+                    });
+                }
+
+                //Log.d("results page", "trying to create rpage");
+
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.d("Spinner", "nothing selected");
+            }
+        });
+
+        //Log.d("results", nutrKeys.get(1));
+        //Log.d("results", densityKeys.get(1));
+
+        //Log.d("results", String.valueOf(nutrMap.get(nutrKeys.get(1))));
+        //Log.d("results", String.valueOf(densityMap.get(densityKeys.get(1))));
+
+        Log.d("Flow", "Final Results Page");
+
+        return_to_main = returnToMainButton(R.id.return_to_start_button);
+        return_to_main.setText("Cancel");
+    }
+
     private void mealComplete(){
         setContentView(R.layout.complete_meal);
         Log.d("meal complete", "entering completion");
@@ -844,17 +896,26 @@ public class MainActivity extends AppCompatActivity {
                 + "_" + String.valueOf(cal.MINUTE) + "_" + String.valueOf(cal.SECOND);
 
         Calendar c = Calendar.getInstance();
-        System.out.println("Current time => " + c.getTime());
+        //System.out.println("Current time => " + c.getTime());
 
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String formattedDate = df.format(c.getTime());
 
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        String currentDateTimeString = DateFormat.getDateInstance().format(new Date());
+        //Date newDate = new Date();
+
+
+        //Log.d("date format", newDate.toString());
 
         return currentDateTimeString;
     }
 
     public void test(){
-        userInfo.exportCSV2(MainActivity.this.getApplicationContext());
+        //userInfo.exportCSV2(MainActivity.this.getApplicationContext());
+        Log.d("test", "test");
+        Cursor datesum = userInfo.queryDateSum();
+        Log.d("datesum test", userInfo.printDateSumTable(datesum));
+        Log.d("date test", String.valueOf(userInfo.getDatesforGraph(datesum)));
+        Log.d("sum test", String.valueOf(userInfo.getSumsforGraph(datesum)));
     }
 }
