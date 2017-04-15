@@ -53,12 +53,12 @@ public class graphviewAdapter {
         //graph.getGridLabelRenderer().setNumHorizontalLabels(length); // only 4 because of the space
 
 // set manual x bounds to have nice steps
-        graph.getViewport().setMinX(X.get(0).getDay());
-        graph.getViewport().setMaxX(X.get(length - 1).getDay());
-        //graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(10);
+        graph.getViewport().setMaxX(15);
+        graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(500);
-        //graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMaxY(600);
+        graph.getViewport().setYAxisBoundsManual(true);
 
         //String[] stockArr = new String[X.size()];
         //stockArr = X.toArray(stockArr);

@@ -177,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         //final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
 
         mainMessageText = (TextView) findViewById(R.id.message_1);
+        mainMessageText.setVisibility(View.INVISIBLE);
 
         picture = (Button) findViewById(R.id.button_1);
         picture.setText("Select an Image");
@@ -373,17 +374,21 @@ public class MainActivity extends AppCompatActivity {
         weekly.setText("Weekly Data");
         daily.setText("Daily Data");
 
+        monthly.setVisibility(View.INVISIBLE);
+        weekly.setVisibility(View.INVISIBLE);
+        daily.setVisibility(View.INVISIBLE);
+
         Button mydata_return_to_main = returnToMainButton(R.id.mydata_return_button);
         GraphView graph = (GraphView) findViewById(R.id.graph);
 
         graphviewAdapter graphy = new graphviewAdapter(graph);
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(1, 1),
                 new DataPoint(1, 5),
                 new DataPoint(2, 3),
                 new DataPoint(3, 2),
                 new DataPoint(4, 6)
+                //new DataPoint(0, 1)
         });
         //graph.addSeries(series);
 
@@ -405,10 +410,14 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.user_clarification);
 
+        final Map<String, Double> volumes = setVolumeMap();
+
         volumeManual = (EditText) findViewById(R.id.volume_input);
         volumeManual.setInputType(InputType.TYPE_CLASS_NUMBER |
                 InputType.TYPE_NUMBER_FLAG_DECIMAL |
                 InputType.TYPE_NUMBER_FLAG_SIGNED);
+        volumeManual.setVisibility(View.INVISIBLE);
+
 
         List<Concept> potentialFoods;
         volInstr = (TextView) findViewById(R.id.volumeInstruction);
@@ -460,6 +469,16 @@ public class MainActivity extends AppCompatActivity {
                 final String selectedFood = foodSpinner.getItemAtPosition(pos).toString();
                 Log.d("Spinner", selectedFood);
                 //Log.d("results page", "trying to create rpage");
+
+                if (volumes.containsKey(selectedFood)){
+                    volumeManual.setText(String.valueOf(volumes.get(selectedFood)));
+                }
+                else {
+                    volumeManual.setText("Please Enter Volume of Food in mL");
+                }
+
+                volumeManual.setVisibility(View.VISIBLE);
+
 
                 finalResultButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -904,7 +923,6 @@ public class MainActivity extends AppCompatActivity {
         String currentDateTimeString = DateFormat.getDateInstance().format(new Date());
         //Date newDate = new Date();
 
-
         //Log.d("date format", newDate.toString());
 
         return currentDateTimeString;
@@ -917,5 +935,16 @@ public class MainActivity extends AppCompatActivity {
         Log.d("datesum test", userInfo.printDateSumTable(datesum));
         Log.d("date test", String.valueOf(userInfo.getDatesforGraph(datesum)));
         Log.d("sum test", String.valueOf(userInfo.getSumsforGraph(datesum)));
+    }
+
+    public Map<String, Double> setVolumeMap(){
+        Map<String, Double> volumes = new HashMap<String, Double>();
+
+        volumes.put("potato", 7.0);
+        volumes.put("banana", 8.0);
+        volumes.put("apple", 5.0);
+        volumes.put("carrot", 6.0);
+
+        return volumes;
     }
 }
