@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
         Button mydata_return_to_main = returnToMainButton(R.id.mydata_return_button);
         GraphView graph = (GraphView) findViewById(R.id.graph);
 
-        graphviewAdapter graphy = new graphviewAdapter(graph);
+        final graphviewAdapter graphy = new graphviewAdapter(graph);
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(1, 5),
@@ -402,6 +402,15 @@ public class MainActivity extends AppCompatActivity {
 
         //graphy.graph(series);
         graphy.graphDate(dates, sums);
+
+        Button export = (Button) findViewById(R.id.graph_export_button);
+        export.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                graphy.exportGraphImage(getApplicationContext());
+            }
+        });
+
     }
 
     private void userClarification() {
@@ -930,11 +939,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void test(){
         //userInfo.exportCSV2(MainActivity.this.getApplicationContext());
-        Log.d("test", "test");
+        /*(Log.d("test", "test");
         Cursor datesum = userInfo.queryDateSum();
         Log.d("datesum test", userInfo.printDateSumTable(datesum));
         Log.d("date test", String.valueOf(userInfo.getDatesforGraph(datesum)));
-        Log.d("sum test", String.valueOf(userInfo.getSumsforGraph(datesum)));
+        Log.d("sum test", String.valueOf(userInfo.getSumsforGraph(datesum)));*/
     }
 
     public Map<String, Double> setVolumeMap(){

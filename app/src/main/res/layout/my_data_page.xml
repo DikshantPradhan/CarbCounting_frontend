@@ -29,6 +29,12 @@
         android:layout_weight="0.99" />
 
     <Button
+        android:text="Export Chart as Image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/graph_export_button" />
+
+    <Button
         android:text="Return to Main Screen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
