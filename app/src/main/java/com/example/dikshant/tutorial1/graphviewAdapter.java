@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.os.Environment;
+import android.util.Log;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
@@ -82,6 +84,7 @@ public class graphviewAdapter {
 
     public void exportGraphImage(Context context){
         String outputDir = saveToInternalStorage(exportGraphBitmap(), context);
+        Log.d("export image", "exported");
     }
 
     public Bitmap exportGraphBitmap(){
@@ -98,19 +101,28 @@ public class graphviewAdapter {
         ContextWrapper cw = new ContextWrapper(context);
         // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        directory = new File(Environment.getExternalStorageDirectory(), "Download");
         // Create imageDir
-        File mypath=new File(directory,"profile.jpg");
+        if (!directory.exists())
+        {
+            directory.mkdirs();
+        }
+        File mypath=new File(directory,"activity.jpg");
+        //File mypath = new File(directory,"mydir");
 
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            Log.d("export image", "tried");
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d("export image", "failed");
         } finally {
             try {
                 fos.close();
+                Log.d("export image", "closed");
             } catch (IOException e) {
                 e.printStackTrace();
             }

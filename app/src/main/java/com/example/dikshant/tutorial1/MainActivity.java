@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             if (densityInfo.getCount() < 1){
                 densityInfo.readCSV();
             }
+            //densityInfo.addEntry("banana,raw", "1.14");
             //Log.d("dDB", String.valueOf(densityInfo.getCount()));
         } catch (Exception e) {
             Log.d("dDB", "DNE");
@@ -290,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("ndbsearch_edittext",searchString);
 
                 // get cursors
-                Cursor nutrition = nutrInfo.queryContaining(searchString);
+                Cursor nutrition = nutrInfo.queryContainingRaw(searchString);
 
                 // get maps
                 final Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);
@@ -304,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int i = 0;
                 while (i < 10 & i < nutrKeys.size()){
-                    resultsText = resultsText + nutrKeys.get(i) + ": " + nutrMap.get(nutrKeys.get(i)) + " gram/gram" + "\n";
+                    resultsText = resultsText + nutrKeys.get(i) + ": " + nutrMap.get(nutrKeys.get(i)) + " gram/100 gram" + "\n";
                     resultsTextValues = resultsTextValues + nutrMap.get(nutrKeys.get(i)) + "\n" + "\n";
                     i++;
                 }
@@ -328,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("ndbsearch_edittext",searchString);
 
                 // get cursors
-                Cursor nutrition = densityInfo.queryContaining(searchString);
+                Cursor nutrition = densityInfo.queryContainingRaw(searchString);
 
                 // get maps
                 final Map<String, Double> densMap = densityInfo.getMapFromCursor(nutrition);
@@ -763,7 +764,7 @@ public class MainActivity extends AppCompatActivity {
                     //densitySpinner.setVisibility(View.VISIBLE);
                     //densitySpinner.setSelection(0);
                     //results.setVisibility(View.INVISIBLE);
-                    Double nutrdensity = nutrMap.get(selectedNutr);
+                    Double nutrdensity = nutrMap.get(selectedNutr)*0.01;
                     Double fooddensity = densityMap.get(selectedDens);
 
                     results.setVisibility(View.VISIBLE);
@@ -949,10 +950,10 @@ public class MainActivity extends AppCompatActivity {
     public Map<String, Double> setVolumeMap(){
         Map<String, Double> volumes = new HashMap<String, Double>();
 
-        volumes.put("potato", 7.0);
-        volumes.put("banana", 8.0);
-        volumes.put("apple", 5.0);
-        volumes.put("carrot", 6.0);
+        volumes.put("potato", 350.0);
+        volumes.put("banana", 280.0);
+        volumes.put("apple", 370.0);
+        volumes.put("carrot", 113.0);
 
         return volumes;
     }
