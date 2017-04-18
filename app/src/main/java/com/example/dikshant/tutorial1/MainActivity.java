@@ -343,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int i = 0;
                 while (i < 10 & i < densKeys.size()){
-                    resultsText = resultsText + densKeys.get(i) + ": " + densMap.get(densKeys.get(i)) + " gram/gram" + "\n";
+                    resultsText = resultsText + densKeys.get(i) + ": " + densMap.get(densKeys.get(i)) + " gram/mL" + "\n";
                     resultsTextValues = resultsTextValues + densMap.get(densKeys.get(i)) + "\n" + "\n";
                     i++;
                 }
