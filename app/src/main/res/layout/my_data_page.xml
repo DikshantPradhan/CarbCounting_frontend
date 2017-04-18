@@ -7,27 +7,32 @@
     <Button
         android:text="Button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="16dp"
         android:id="@+id/data_monthly" />
 
     <Button
         android:text="Button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="14dp"
         android:id="@+id/data_weekly" />
 
     <Button
         android:text="Button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="14dp"
         android:id="@+id/data_daily" />
 
-    <TextView
-        android:text="TextView"
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="351dp"
+        android:layout_height="200dip"
+        android:id="@+id/graph"
+        android:layout_weight="0.99" />
+
+    <Button
+        android:text="Export Chart as Image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:layout_weight="0.96" />
+        android:id="@+id/graph_export_button" />
 
     <Button
         android:text="Return to Main Screen"
@@ -35,8 +40,4 @@
         android:layout_height="wrap_content"
         android:id="@+id/mydata_return_button" />
 
-    <com.jjoe64.graphview.GraphView
-        android:layout_width="match_parent"
-        android:layout_height="200dip"
-        android:id="@+id/graph" />
 </LinearLayout>

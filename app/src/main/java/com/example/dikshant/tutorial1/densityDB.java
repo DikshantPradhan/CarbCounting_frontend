@@ -237,4 +237,23 @@ public class densityDB extends DBHandler {
 
         return keys;
     }
+
+    public void addEntry(String food, String density){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Log.d("DB", "found writable");
+
+        //Calendar cal = Calendar.getInstance();
+        //int date = cal.DATE;
+        //String date = "2";
+
+        // value creation
+        ContentValues values = new ContentValues();
+
+        values.put(FOOD, food);
+        values.put(DENSITY, density);
+
+        // db insertion
+        db.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+    }
 }
