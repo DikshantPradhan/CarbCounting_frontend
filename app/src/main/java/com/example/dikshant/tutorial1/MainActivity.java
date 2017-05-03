@@ -1049,6 +1049,10 @@ public class MainActivity extends AppCompatActivity {
         Cursor nutrition = nutrInfo.queryContainingRaw(food);
         Cursor density = densityInfo.queryContainingRaw(food);
 
+        if (nutrition.getCount() < 1 || density.getCount() < 1){
+            userClarificationwithText(food, 0.0);
+        }
+
         // get maps
         final Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);
         final Map<String, Double> densityMap = densityInfo.getMapFromCursor(density);
@@ -1058,11 +1062,22 @@ public class MainActivity extends AppCompatActivity {
 
     public double getVolume(String food){
 
+
         Map<String, Double> volumes = setVolumeMap();
 
         //replace with actual volume calculation
 
-        return volumes.get(food);
+        double volume_final = 0;
+
+        try{
+            volume_final = volumes.get(food);
+        }
+        catch (Exception e){
+            userClarificationwithText();
+        }
+
+
+        return volume_final;
 
     }
 }
