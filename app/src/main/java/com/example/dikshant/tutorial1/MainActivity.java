@@ -1069,13 +1069,12 @@ public class MainActivity extends AppCompatActivity {
 
         double volume_final = 0;
 
-        try{
+        if (volumes.containsKey(food)){
             volume_final = volumes.get(food);
         }
-        catch (Exception e){
-            userClarificationwithText();
+        else {
+            userClarificationwithText(food, 0.0);
         }
-
 
         return volume_final;
 
