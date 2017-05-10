@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     nutritionalDB nutrInfo;
     densityDB densityInfo;
     nutrMeal meal;
+    List<Concept> predicted;
 
     // main page
     TextView mainMessageText;
@@ -238,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override protected void onPostExecute(ClarifaiResponse<List<ClarifaiOutput<Concept>>> response) {
                         //setBusy(false);
-                        postSelection.setVisibility(View.VISIBLE);
+                        //postSelection.setVisibility(View.VISIBLE);
                     }
                 }.execute();
 
@@ -256,6 +257,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         );
+
+        TextView proceed= (TextView) findViewById(R.id.proceed_instr);
+        proceed.setText("Please wait for results after selecting");
+
+        TextView a = (TextView) findViewById(R.id.textView6);
+        a.setVisibility(View.INVISIBLE);
 
         Button selectionWithText = (Button) findViewById(R.id.userclar_text);
         selectionWithText.setOnClickListener(new View.OnClickListener() {
@@ -416,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void userClarification() {
 
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
+        //final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
 
         setContentView(R.layout.user_clarification);
 
@@ -460,7 +467,7 @@ public class MainActivity extends AppCompatActivity {
 
         foodSpinner = (Spinner) findViewById(R.id.spinner);
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         String[] predictionArray = clarifai.predictionsArray();
         List<String> predictionsArrayList = clarifai.predictionsList();
@@ -552,6 +559,55 @@ public class MainActivity extends AppCompatActivity {
                 resultsPage(selectedFood, volume);
             }
         });
+
+        Button return_to_main = returnToMainButton(R.id.userclar_return);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+    }
+
+    private void userClarificationwithText(String food, Double volume) {
+
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.potato_list, android.R.layout.simple_spinner_item);
+
+        setContentView(R.layout.user_clarification_with_text);
+
+        volumeManual = (EditText) findViewById(R.id.volume_input_withtext);
+        volumeManual.setInputType(InputType.TYPE_CLASS_NUMBER |
+                InputType.TYPE_NUMBER_FLAG_DECIMAL |
+                InputType.TYPE_NUMBER_FLAG_SIGNED);
+
+        List<Concept> potentialFoods;
+
+        foodManual = (EditText) findViewById(R.id.selection_edittext);
+
+        foodManual.setText(food);
+        volumeManual.setText(String.valueOf(volume));
+
+        finalResultButton = (Button) findViewById(R.id.finalResult_withtext);
+        finalResultButton.setText("Show Final Result");
+        finalResultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //rpage.setCarbs("30");
+                //rpage.setFood(selectedFood);
+
+                Log.d("results page", "created rpage");
+                //setContentView(R.layout.final_result);
+
+                String selectedFood = foodManual.getText().toString();
+
+                String volstring = volumeManual.getText().toString();
+                Log.d("edittext",volstring);
+
+                Double volume = Double.valueOf(volstring); //Float.valueOf(volumeManual.getText().toString());
+
+                resultsPage(selectedFood, volume);
+            }
+        });
+
+        Button return_to_main = returnToMainButton(R.id.userclar_return);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -649,7 +705,6 @@ public class MainActivity extends AppCompatActivity {
                             resultsAdd.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    //setContentView(R.layout.activity_main);
                                     meal.addMeal(selectedFood, carbFactor, volume);
                                     imageSelection();
                                 }
@@ -657,15 +712,9 @@ public class MainActivity extends AppCompatActivity {
                             resultsComplete.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    //setContentView(R.layout.activity_main);
                                     meal.addMeal(selectedFood, carbFactor, volume);
                                     Log.d("completing meal", "stepping into function");
                                     mealComplete();
-                                    //userInfo.addEntry(meal, getDate());
-                                    //meal.clear();
-                                    //setContentView(R.layout.activity_main);
-                                    //userInfo.exportCSV2(MainActivity.this.getApplicationContext());
-                                    //introScreen();
 
                                 }
                             });
@@ -684,11 +733,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Log.d("results", nutrKeys.get(1));
-        //Log.d("results", densityKeys.get(1));
-
-        //Log.d("results", String.valueOf(nutrMap.get(nutrKeys.get(1))));
-        //Log.d("results", String.valueOf(densityMap.get(densityKeys.get(1))));
 
         Log.d("Flow", "Final Results Page");
 
@@ -701,8 +745,17 @@ public class MainActivity extends AppCompatActivity {
         results.setVisibility(View.INVISIBLE);
         //results.setText(selectedFood);
 
+        final Button incorrect = (Button) findViewById(R.id.wrong_food);
         final Button resultsAdd = (Button) findViewById(R.id.results_add);
         final Button resultsComplete = (Button) findViewById(R.id.results_complete);
+
+        incorrect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //setContentView(R.layout.activity_main);
+                userClarificationwithText(selectedFood, volume);
+            }
+        });
 
         resultsAdd.setVisibility(View.INVISIBLE);
         resultsComplete.setVisibility(View.INVISIBLE);
@@ -761,14 +814,13 @@ public class MainActivity extends AppCompatActivity {
                 final String selectedNutr = nutritionalSpinner.getItemAtPosition(pos).toString();
                 Log.d("nutrSpinner", selectedNutr);
                 if (selectedNutr != nutrSelect){
-                    //densitySpinner.setVisibility(View.VISIBLE);
-                    //densitySpinner.setSelection(0);
-                    //results.setVisibility(View.INVISIBLE);
                     Double nutrdensity = nutrMap.get(selectedNutr)*0.01;
                     Double fooddensity = densityMap.get(selectedDens);
 
+                    Log.d("meal size", String.valueOf(meal.getSum()));
+
                     results.setVisibility(View.VISIBLE);
-                    results.setText(String.valueOf(nutrdensity*fooddensity*volume) + " grams of Carb");
+                    results.setText(String.valueOf(meal.getSum() + nutrdensity*fooddensity*volume) + " grams of Carb");
                     //meal.addMeal(selectedFood, carbFactor, volume);
 
                     final Double carbFactor = nutrdensity*fooddensity;
@@ -791,11 +843,6 @@ public class MainActivity extends AppCompatActivity {
                             meal.addMeal(selectedFood, carbFactor, volume);
                             Log.d("completing meal", "stepping into function");
                             mealComplete();
-                            //userInfo.addEntry(meal, getDate());
-                            //meal.clear();
-                            //setContentView(R.layout.activity_main);
-                            //userInfo.exportCSV2(MainActivity.this.getApplicationContext());
-                            //introScreen();
 
                         }
                     });
@@ -824,8 +871,6 @@ public class MainActivity extends AppCompatActivity {
     private void mealComplete(){
         setContentView(R.layout.complete_meal);
         Log.d("meal complete", "entering completion");
-
-        //final nutrMeal meal = meal_input;
 
         final EditText mealEntry = (EditText) findViewById(R.id.name_of_meal);
 
@@ -877,7 +922,8 @@ public class MainActivity extends AppCompatActivity {
                 if (imageBytes != null) {
                     //onImagePicked(imageBytes);
                     Log.d("prediction", "attempting");
-                    clarifai.onImagePicked(imageBytes);
+                    //clarifai.onImagePicked(imageBytes);
+                    onImagePicked(imageBytes);
                     try {
                         Log.d("image display", "attempting to set");
                         //imageSelected.setImageBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length));
@@ -887,11 +933,50 @@ public class MainActivity extends AppCompatActivity {
                     }
                     //
                     //List<Concept> predictions = clarifai.getPredictions(imageBytes);
-                    //Log.d("predictions", predictions.get(0).toString());
+                    //Log.d("predictions"+, predictions.get(0).toString());
                     Log.d("predictions", "predicted");
                 }
                 break;
         }
+    }
+
+    public void onImagePicked(@NonNull final byte[] imageBytes) {
+        Log.d("image picked", "running predictor");
+
+        new AsyncTask<Void, Void, ClarifaiResponse<List<ClarifaiOutput<Concept>>>>() {
+            @Override protected ClarifaiResponse<List<ClarifaiOutput<Concept>>> doInBackground(Void... params) {
+                // The default Clarifai model that identifies concepts in images
+                //final ConceptModel generalModel = App.get().clarifaiClient().getDefaultModels().foodModel();
+
+                // Use this model to predict, with the image that the user just selected as the input
+
+                Log.d("predictions", "something happened");
+                return clarifai.foodModel.predict()
+                        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(imageBytes)))
+                        .executeSync();
+            }
+
+            @Override protected void onPostExecute(ClarifaiResponse<List<ClarifaiOutput<Concept>>> response) {
+                //setBusy(false);
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                final List<ClarifaiOutput<Concept>> predictions = response.get();
+                if (predictions.isEmpty()) {
+                    Log.d("predictions", "none");
+                    return;
+                }
+                //predictionsFlag = true;
+                predicted = predictions.get(0).data();
+                //clarifai.predictionsList = predictions.get(0).data();
+                clarifai.setPredictions(predicted);
+                Log.d("predictions", String.valueOf(predicted.get(0).name()));
+                Log.d("predictions", "set flag");
+                String food = predicted.get(0).name();
+                resultsPage(food, getVolume(food));
+
+            }
+        }.execute();
     }
 
     @Nullable
@@ -956,5 +1041,42 @@ public class MainActivity extends AppCompatActivity {
         volumes.put("carrot", 113.0);
 
         return volumes;
+    }
+
+    public void getCarbQuick(String food){
+
+        // get cursors
+        Cursor nutrition = nutrInfo.queryContainingRaw(food);
+        Cursor density = densityInfo.queryContainingRaw(food);
+
+        if (nutrition.getCount() < 1 || density.getCount() < 1){
+            userClarificationwithText(food, 0.0);
+        }
+
+        // get maps
+        final Map<String, Double> nutrMap = nutrInfo.getMapFromCursor(nutrition);
+        final Map<String, Double> densityMap = densityInfo.getMapFromCursor(density);
+
+        Double carbFactor = nutrMap.get(food)*densityMap.get(food);
+    }
+
+    public double getVolume(String food){
+
+
+        Map<String, Double> volumes = setVolumeMap();
+
+        //replace with actual volume calculation
+
+        double volume_final = 0;
+
+        if (volumes.containsKey(food)){
+            volume_final = volumes.get(food);
+        }
+        else {
+            userClarificationwithText(food, 0.0);
+        }
+
+        return volume_final;
+
     }
 }

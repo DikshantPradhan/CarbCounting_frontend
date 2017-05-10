@@ -57,6 +57,24 @@ public class nutrMeal {
         return name;
     }
 
+    public Double getSum(){
+
+        int size = foods.size();
+
+        if (size < 1){
+            return 0.0;
+        }
+
+        Double sum = 0.0;
+
+        for (int i = 0; i < size; i++){
+            sum += carbFactors.get(i)*volumes.get(i);
+        }
+
+        return sum;
+
+    }
+
     public void clear(){
         foods = new ArrayList<String>();
         carbFactors = new ArrayList<Double>();

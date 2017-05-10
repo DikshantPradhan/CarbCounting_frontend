@@ -43,8 +43,8 @@ public class clarifaiHandler extends MainActivity {
 
     @Nullable
     private ClarifaiClient client;
-    private ConceptModel foodModel;
-    private List<Concept> predictionsList;
+    public ConceptModel foodModel;
+    public List<Concept> predictionsList;
 
     private boolean predictionsFlag;
 
@@ -99,20 +99,6 @@ public class clarifaiHandler extends MainActivity {
 
     public void onImagePicked(@NonNull final byte[] imageBytes) {
         Log.d("image picked", "running predictor");
-        // Now we will upload our image to the Clarifai API
-
-        // Make sure we don't show a list of old concepts while the image is being uploaded
-        //adapter.setData(Collections.<Concept>emptyList());
-
-        /*ClarifaiResponse<List<ClarifaiOutput<Concept>>> response = foodModel.predict()
-                .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(imageBytes)))
-                .executeSync();
-
-        List<ClarifaiOutput<Concept>> predictions = response.get();
-
-        predictionsFlag = true;
-        Log.d("predictions", "set flag");
-        predictionsList = predictions.get(0).data();*/
 
         new AsyncTask<Void, Void, ClarifaiResponse<List<ClarifaiOutput<Concept>>>>() {
             @Override protected ClarifaiResponse<List<ClarifaiOutput<Concept>>> doInBackground(Void... params) {
@@ -130,12 +116,10 @@ public class clarifaiHandler extends MainActivity {
             @Override protected void onPostExecute(ClarifaiResponse<List<ClarifaiOutput<Concept>>> response) {
                 //setBusy(false);
                 if (!response.isSuccessful()) {
-                    //showErrorSnackbar(R.string.error_while_contacting_api);
                     return;
                 }
                 final List<ClarifaiOutput<Concept>> predictions = response.get();
                 if (predictions.isEmpty()) {
-                    //showErrorSnackbar(R.string.no_results_from_api);
                     Log.d("predictions", "none");
                     return;
                 }
@@ -144,13 +128,6 @@ public class clarifaiHandler extends MainActivity {
                 predictionsList = predictions.get(0).data();
 
             }
-            //private void showErrorSnackbar(@StringRes int errorString) {
-            //    Snackbar.make(
-            //            root,
-            //            errorString,
-            //            Snackbar.LENGTH_INDEFINITE
-            //    ).show();
-            //}
         }.execute();
     }
 
@@ -192,6 +169,15 @@ public class clarifaiHandler extends MainActivity {
     public boolean hasPredictions(){
         return predictionsFlag;
     }
+
+    public void setPredictions(List<Concept> list){
+        predictionsList = list;
+    }
+
+    /*public ClarifaiResponse<List<ClarifaiOutput<Concept>>>> predict(@NonNull final byte[] imageBytes){
+        return foodModel.predict()
+                .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(imageBytes)));
+    }*/
 
     /*private void setBusy(final boolean busy) {
         runOnUiThread(new Runnable() {
